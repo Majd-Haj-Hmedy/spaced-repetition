@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:repet/screens/calendar.dart';
+import 'package:repet/screens/folders.dart';
+import 'package:repet/screens/home.dart';
+import 'package:repet/screens/report.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,27 +37,44 @@ class _MainScreenState extends State<MainScreen> {
   void _updateScreen(int index) {
     setState(() {
       _navIndex = index;
-      var key = '';
-      switch (_navIndex) {
-        case 0:
-          key = 'home';
-          break;
-        case 1:
-          key = 'folder';
-          break;
-        case 2:
-          key = 'calendar';
-          break;
-        case 3:
-          key = 'report';
-          break;
-      }
-      _updateAppBarTitle(key);
     });
+
+    var key = '';
+    switch (_navIndex) {
+      case 0:
+        key = 'home';
+        break;
+      case 1:
+        key = 'folder';
+        break;
+      case 2:
+        key = 'calendar';
+        break;
+      case 3:
+        key = 'report';
+        break;
+    }
+    _updateAppBarTitle(key);
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget activeScreen = const HomeScreen();
+    switch (_navIndex) {
+      case 0:
+        activeScreen = const HomeScreen();
+        break;
+      case 1:
+        activeScreen = const FoldersScreen();
+        break;
+      case 2:
+        activeScreen = const CalendarScreen();
+        break;
+      case 3:
+        activeScreen = const ReportScreen();
+        break;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitle),
@@ -82,6 +103,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
+      body: activeScreen,
     );
   }
 }
