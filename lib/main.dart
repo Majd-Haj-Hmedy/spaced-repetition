@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/screens/main_screen.dart';
 
 void main() {
-  runApp(const RepetApp());
+  runApp(
+    const ProviderScope(
+      child: RepetApp(),
+    ),
+  );
 }
 
 class RepetApp extends StatelessWidget {

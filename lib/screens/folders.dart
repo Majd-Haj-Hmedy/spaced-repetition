@@ -1,47 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:repet/data/dummy_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
 import 'package:repet/widgets/folders/folder_item.dart';
 import '../models/folder.dart';
 
 enum FolderMode { add, edit }
 
-// FIXME: Convert back to a stateless widget when Riverpod is implemented
-class FoldersScreen extends StatefulWidget {
+class FoldersScreen extends ConsumerStatefulWidget {
   const FoldersScreen({super.key});
 
   @override
-  State<FoldersScreen> createState() => _FoldersScreenState();
+  ConsumerState<FoldersScreen> createState() => _FoldersScreenState();
 }
 
-class _FoldersScreenState extends State<FoldersScreen> {
+class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   void _addFolder(Folder folder) {
-    setState(() {
-      dummyFolders.add(folder);
-    });
+    ref.read(foldersProvider.notifier).addFolder(folder);
   }
 
-  void _renameFolder(Folder folder, String name) {
-    setState(() {
-      folder.name = name;
-    });
-  }
-
-  void _removeFolder(Folder folder) {
-    setState(() {
-      dummyFolders.remove(folder);
-    });
-  }
-
-  void _showFolderDialog(FolderMode mode, [Folder? folder, BuildContext? optionalContext]) {
+  void _showAddFolderDialog(FolderMode mode) {
     showDialog(
-      context: optionalContext ?? context,
+      context: context,
       builder: (ctx) => Dialog(
         child: FolderDialog(
           folderMode: mode,
-          folderActionHandler: (name) => mode == FolderMode.add
-              ? _addFolder(Folder(name: name))
-              : _renameFolder(folder!, name),
+          folderActionHandler: (name) => _addFolder(
+            Folder(name: name),
+          ),
         ),
       ),
     );
@@ -49,6 +35,7 @@ class _FoldersScreenState extends State<FoldersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final folders = ref.watch(foldersProvider);
     return Stack(
       children: [
         GridView.builder(
@@ -58,18 +45,16 @@ class _FoldersScreenState extends State<FoldersScreen> {
             crossAxisSpacing: 30,
             mainAxisSpacing: 30,
           ),
-          itemCount: dummyFolders.length,
+          itemCount: folders.length,
           itemBuilder: (context, index) => FolderItem(
-            folder: dummyFolders[index],
-            removeFolderHandler: _removeFolder,
-            renameDialogHandler: (folder) => _showFolderDialog(FolderMode.edit, folder, context),
+            folder: folders[index],
           ),
         ),
         Positioned(
           bottom: 25,
           right: 25,
           child: FloatingActionButton(
-            onPressed: () => _showFolderDialog(FolderMode.add),
+            onPressed: () => _showAddFolderDialog(FolderMode.add),
             child: const Icon(Icons.add),
           ),
         ),
