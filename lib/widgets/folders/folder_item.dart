@@ -40,7 +40,7 @@ class FolderItem extends ConsumerWidget {
       builder: (context) => AlertDialog(
         title: const Text('Delete Folder'),
         content: const Text(
-            'This folder and its content can NOT be retrieved, do you want to proceed?'),
+            'This folder and its content can NOT be retrieved\nDo you want to proceed?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -51,6 +51,9 @@ class FolderItem extends ConsumerWidget {
               _deleteFolder();
               Navigator.pop(context);
             },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('Delete'),
           ),
         ],
@@ -73,16 +76,15 @@ class FolderItem extends ConsumerWidget {
             size: 100,
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // FIXME: Text is not centered
               const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: SizedBox(
-                  width: 80,
-                  child: Text(
-                    folder.name,
-                    textAlign: TextAlign.center,
-                  ),
+              Flexible(
+                child: Text(
+                  folder.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                 ),
               ),
               const Spacer(),

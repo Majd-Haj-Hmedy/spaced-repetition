@@ -52,6 +52,13 @@ class _FolderDialogState extends State<FolderDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
                 ElevatedButton(
                   onPressed: () {
                     if (_nameController.text.isNotEmpty) {
@@ -59,6 +66,10 @@ class _FolderDialogState extends State<FolderDialog> {
                       widget.folderActionHandler(_nameController.text);
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   child: Text(
                       widget.folderMode == FolderMode.add ? 'Add' : 'Edit'),
                 ),
