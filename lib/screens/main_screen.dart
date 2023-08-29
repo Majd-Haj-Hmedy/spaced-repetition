@@ -86,7 +86,8 @@ class _MainScreenState extends State<MainScreen> {
         onTap: _updateScreen,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home_filled),
             label: _tabNames[0],
           ),
           BottomNavigationBarItem(
@@ -94,11 +95,12 @@ class _MainScreenState extends State<MainScreen> {
             label: _tabNames[1],
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_month),
+            icon: const Icon(Icons.calendar_month_outlined),
+            activeIcon: const Icon(Icons.calendar_month_sharp),
             label: _tabNames[2],
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.equalizer),
+            icon: const Icon(Icons.equalizer_outlined),
             label: _tabNames[3],
           ),
         ],
