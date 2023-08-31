@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/lecture.dart';
 import 'package:repet/providers/lectures_provider.dart';
+import 'package:repet/widgets/lectures/lecture_preview.dart';
 
 import '../models/folder.dart';
 
@@ -31,16 +32,14 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
         child: const Icon(Icons.add),
       ),
       body: GridView.builder(
+        padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
-          childAspectRatio: 3 / 2,
           crossAxisSpacing: 30,
           mainAxisSpacing: 30,
         ),
         itemCount: lectures.length,
-        itemBuilder: (context, index) => Text(
-          lectures[index].name,
-        ),
+        itemBuilder: (context, index) => LecturePreview(lecture: lectures[index]),
       ),
     );
   }
