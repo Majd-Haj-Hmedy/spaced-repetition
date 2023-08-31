@@ -3,11 +3,5 @@ import 'package:uuid/uuid.dart';
 class Folder {
   late String id;
   String name;
-  late List<String> lectures;
-  Folder({required this.name, List<String>? lectures}) {
-    if (lectures != null) {
-      this.lectures = lectures;
-      id = const Uuid().v4();
-    }
-  }
+  Folder({required this.name}) : id = const Uuid().v4();
 }

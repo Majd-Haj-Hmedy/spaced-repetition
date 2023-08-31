@@ -24,6 +24,10 @@ class FoldersStateNotifier extends StateNotifier<List<Folder>> {
     folder.name = name;
     state = [...state];
   }
+
+  Folder getFolderByName(String name) {
+    return state.where((element) => element.name == name).toList()[0];
+  }
 }
 
 final foldersProvider =

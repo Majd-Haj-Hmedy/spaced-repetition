@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/folder.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/screens/folders.dart';
+import 'package:repet/screens/lectures.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
 
+// ignore: must_be_immutable
 class FolderItem extends ConsumerWidget {
   final Folder folder;
   FolderItem({
@@ -66,7 +68,12 @@ class FolderItem extends ConsumerWidget {
     widRef = ref;
     return InkWell(
       // TODO: Open lectures screen
-      onTap: () => null,
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LecturesScreen(folder: folder),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -80,12 +87,10 @@ class FolderItem extends ConsumerWidget {
             children: [
               // FIXME: Text is not centered
               const Spacer(),
-              Flexible(
-                child: Text(
-                  folder.name,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                ),
+              Text(
+                folder.name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
               ),
               const Spacer(),
               PopupMenuButton(

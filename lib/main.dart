@@ -19,6 +19,7 @@ class RepetApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 82, 131, 235),
+          brightness: Brightness.dark
         ),
         useMaterial3: true,
       ),
