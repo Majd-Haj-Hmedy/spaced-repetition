@@ -3,7 +3,7 @@ import 'package:repet/models/folder.dart';
 import 'package:repet/models/lecture.dart';
 
 class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
-  LecturesStateNotifier(): super([]);
+  LecturesStateNotifier() : super([]);
 
   void addLecture(Lecture lecture) {
     state = [...state, lecture];
@@ -21,6 +21,13 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
   List<Lecture> fetchLecturesByFolder(Folder folder) {
     return state.where((element) => element.folder == folder.name).toList();
   }
+
+  void advanceLecture(Lecture lecture) {
+    lecture.advance();
+    state = [...state];
+  }
 }
 
-final lecturesProvider = StateNotifierProvider<LecturesStateNotifier, List<Lecture>>((ref) => LecturesStateNotifier());
+final lecturesProvider =
+    StateNotifierProvider<LecturesStateNotifier, List<Lecture>>(
+        (ref) => LecturesStateNotifier());

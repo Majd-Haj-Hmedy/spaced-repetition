@@ -24,6 +24,7 @@ class _AddLectureState extends State<AddLecture> {
   var _selectedDifficulty = 0;
   var _selectedStage = 1;
   var _selectedDate = DateTime.now();
+
   // This boolean is used to show dynamic text guiding the user to choose a date
   var _hasChosenDate = false;
 
@@ -38,11 +39,12 @@ class _AddLectureState extends State<AddLecture> {
   void _showDatePicker() async {
     final dateNow = DateTime.now();
     _selectedDate = await showDatePicker(
-      context: context,
-      initialDate: dateNow,
-      firstDate: dateNow.copyWith(day: dateNow.day - 30),
-      lastDate: dateNow.copyWith(month: dateNow.month + 3),
-    ) ?? _selectedDate;
+          context: context,
+          initialDate: dateNow,
+          firstDate: dateNow.copyWith(day: dateNow.day - 30),
+          lastDate: dateNow.copyWith(month: dateNow.month + 3),
+        ) ??
+        _selectedDate;
     setState(() {
       _hasChosenDate = true;
     });
@@ -123,7 +125,12 @@ class _AddLectureState extends State<AddLecture> {
                       onPressed: _showDatePicker,
                       child: Row(
                         children: [
-                          Text(_hasChosenDate ? MultipleDateFormat.simpleYearFormatDate(_selectedDate) :  'Select start date'),
+                          Text(
+                            _hasChosenDate
+                                ? MultipleDateFormat.simpleYearFormatDate(
+                                    _selectedDate)
+                                : 'Select start date',
+                          ),
                           const SizedBox(width: 6),
                           const Icon(Icons.calendar_month),
                         ],

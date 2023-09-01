@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/lecture.dart';
 import 'package:repet/providers/lectures_provider.dart';
-import 'package:repet/widgets/lectures/lecture_preview.dart';
+import 'package:repet/widgets/lectures/lecture_item.dart';
 
 import '../models/folder.dart';
 import '../widgets/lectures/add_lecture.dart';
@@ -22,15 +22,22 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
   void _showAddLectureDialog() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => AddLecture(folderName: widget.folder.name, addLectureHandler: _addLecture),
+      builder: (context) => AddLecture(
+          folderName: widget.folder.name, addLectureHandler: _addLecture),
     );
   }
 
-  void _addLecture(String name, int difficulty, String folder, int stage, DateTime start) {
+  void _addLecture(
+      String name, int difficulty, String folder, int stage, DateTime start) {
     setState(() {
       setState(() {
         ref.read(lecturesProvider.notifier).addLecture(
-              Lecture(name: name, difficulty: difficulty, folder: folder, stage: stage, start: start),
+              Lecture(
+                  name: name,
+                  difficulty: difficulty,
+                  folder: folder,
+                  stage: stage,
+                  start: start),
             );
       });
     });
@@ -59,8 +66,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
           mainAxisSpacing: 20,
         ),
         itemCount: lectures.length,
-        itemBuilder: (context, index) =>
-            LecturePreview(lecture: lectures[index]),
+        itemBuilder: (context, index) => LectureItem(lecture: lectures[index]),
       ),
     );
   }

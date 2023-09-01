@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/folder.dart';
 import 'package:repet/providers/folders_provider.dart';
+import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/lectures.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
@@ -51,6 +52,13 @@ class FolderItem extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               _deleteFolder();
+              final lecturesList = widRef
+                  .read(lecturesProvider.notifier)
+                  .fetchLecturesByFolder(folder);
+
+              for (final lecture in lecturesList) {
+                widRef.read(lecturesProvider.notifier).deleteLecture(lecture);
+              }
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
@@ -67,7 +75,6 @@ class FolderItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     widRef = ref;
     return InkWell(
-      // TODO: Open lectures screen
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
@@ -90,7 +97,7 @@ class FolderItem extends ConsumerWidget {
               Text(
                 folder.name,
                 textAlign: TextAlign.center,
-                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const Spacer(),
               PopupMenuButton(

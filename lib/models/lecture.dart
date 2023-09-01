@@ -34,7 +34,7 @@ class Lecture {
     // This for loop runs 5 times, each time it assigns an appending value based
     // on the corresponding stage the variable 'i' points to (This integer is
     // used to add a fixed amount of days to each stage so as to adhere to the
-    // concept of spaced repetition,
+    // concept of spaced repetition)
 
     // After that, if 'i' is less than the stage passed to the constructor, it's
     // a stage in the past and therefore assigned to the stages history, otherwise,
@@ -60,18 +60,29 @@ class Lecture {
           break;
       }
       if (i < stage) {
+        dates[i] = DateTime(start.year, start.month, start.day + dayAppend);
         stagesHistory[i] =
             DateTime(start.year, start.month, start.day + dayAppend);
       } else {
         dates[i] = DateTime(start.year, start.month, start.day + dayAppend);
+        stagesHistory[i] = DateTime(2001, 9, 11);
       }
     }
     currentStage = stage;
-
     currentDate = dates[stage]!;
   }
 
+  int getStageStatus(int stage) {
+    return stagesHistory[stage]!.compareTo(dates[stage]!);
+  }
+
   void advance() {
-    // TODO: Implement advance
+    final dateNow = DateTime.now();
+    final dayNow = DateTime(dateNow.year, dateNow.month, dateNow.day);
+    stagesHistory[currentStage] = dayNow;
+    if (currentStage < 5) {
+      ++currentStage;
+      currentDate = dates[currentStage]!;
+    }
   }
 }
