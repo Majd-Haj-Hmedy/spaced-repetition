@@ -5,25 +5,73 @@ class Lecture {
   String name;
   final String folder;
   final int difficulty;
-  final Map<int, DateTime> current;
+
+  int currentStage;
+  DateTime currentDate;
+
+  // This map stores all the entries in which the lecture should move
+  // through the stages that are left
   final Map<int, DateTime> dates;
-  final Map<int, DateTime> stagesHistory;
+
+  // This map stores all the entries in which the lecture had already moved
+  // through, the date is used to check whether the stage was completed in-time,
+  // delayed, or not done (in which the dateTime object is null)
+  final Map<int, DateTime?> stagesHistory;
 
   Lecture({
     required this.name,
     required this.difficulty,
     required this.folder,
+    required DateTime start,
+    required int stage,
   })  : id = const Uuid().v4(),
-        current = {},
         dates = {},
-        stagesHistory = {};
+        stagesHistory = {},
+        // The following two lines are only temporary and are both overridden in the
+        // class constructor body
+        currentStage = 0,
+        currentDate = DateTime.now() {
+    // This for loop runs 5 times, each time it assigns an appending value based
+    // on the corresponding stage the variable 'i' points to (This integer is
+    // used to add a fixed amount of days to each stage so as to adhere to the
+    // concept of spaced repetition,
 
-  Map<int, DateTime> createDefaultPlan(DateTime start) {
-    dates[1] = DateTime(start.year, start.month, start.day);
-    dates[2] = DateTime(start.year, start.month, start.day + 2);
-    dates[3] = DateTime(start.year, start.month, start.day + 6);
-    dates[4] = DateTime(start.year, start.month, start.day + 13);
-    dates[5] = DateTime(start.year, start.month, start.day + 29);
-    return dates;
+    // After that, if 'i' is less than the stage passed to the constructor, it's
+    // a stage in the past and therefore assigned to the stages history, otherwise,
+    // it's assigned to the dates map which holds future stages and their
+    // corresponding dates
+    for (int i = 1; i <= 5; i++) {
+      var dayAppend = 0;
+      switch (i) {
+        case 1:
+          dayAppend = 0;
+          break;
+        case 2:
+          dayAppend = 2;
+          break;
+        case 3:
+          dayAppend = 6;
+          break;
+        case 4:
+          dayAppend = 13;
+          break;
+        case 5:
+          dayAppend = 29;
+          break;
+      }
+      if (i < stage) {
+        stagesHistory[i] =
+            DateTime(start.year, start.month, start.day + dayAppend);
+      } else {
+        dates[i] = DateTime(start.year, start.month, start.day + dayAppend);
+      }
+    }
+    currentStage = stage;
+
+    currentDate = dates[stage]!;
+  }
+
+  void advance() {
+    // TODO: Implement advance
   }
 }

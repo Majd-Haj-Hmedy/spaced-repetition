@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:repet/util/date_format.dart';
 
 class AddLecture extends StatefulWidget {
   final String folderName;
@@ -6,9 +7,12 @@ class AddLecture extends StatefulWidget {
     String name,
     int difficulty,
     String folder,
+    int stage,
+    DateTime start,
   ) addLectureHandler;
 
-  const AddLecture({required this.folderName, required this.addLectureHandler, super.key});
+  const AddLecture(
+      {required this.folderName, required this.addLectureHandler, super.key});
 
   @override
   State<AddLecture> createState() => _AddLectureState();
@@ -19,12 +23,29 @@ class _AddLectureState extends State<AddLecture> {
   var _enteredName = '';
   var _selectedDifficulty = 0;
   var _selectedStage = 1;
+  var _selectedDate = DateTime.now();
+  // This boolean is used to show dynamic text guiding the user to choose a date
+  var _hasChosenDate = false;
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      widget.addLectureHandler(_enteredName, _selectedDifficulty, widget.folderName);
+      widget.addLectureHandler(_enteredName, _selectedDifficulty,
+          widget.folderName, _selectedStage, _selectedDate);
     }
+  }
+
+  void _showDatePicker() async {
+    final dateNow = DateTime.now();
+    _selectedDate = await showDatePicker(
+      context: context,
+      initialDate: dateNow,
+      firstDate: dateNow.copyWith(day: dateNow.day - 30),
+      lastDate: dateNow.copyWith(month: dateNow.month + 3),
+    ) ?? _selectedDate;
+    setState(() {
+      _hasChosenDate = true;
+    });
   }
 
   @override
@@ -98,14 +119,13 @@ class _AddLectureState extends State<AddLecture> {
                       },
                     ),
                     const Spacer(),
-                    // FIXME Add the start date picker functionality
-                    const TextButton(
-                      onPressed: null,
+                    TextButton(
+                      onPressed: _showDatePicker,
                       child: Row(
                         children: [
-                          Text('Select start date'),
-                          SizedBox(width: 6),
-                          Icon(Icons.calendar_month),
+                          Text(_hasChosenDate ? MultipleDateFormat.simpleYearFormatDate(_selectedDate) :  'Select start date'),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.calendar_month),
                         ],
                       ),
                     ),
@@ -116,15 +136,17 @@ class _AddLectureState extends State<AddLecture> {
                   'Have already progressed? Pick up where you left off',
                   style: TextStyle(fontSize: 16),
                 ),
-                // FIXME Add the slider functionality
                 Slider.adaptive(
-                  value: 1,
+                  value: _selectedStage.toDouble(),
                   min: 1,
-                  divisions: 2,
-                  max: 4,
+                  divisions: 4,
+                  max: 5,
                   label: '$_selectedStage',
-                  onChanged: null,
-                  // onChanged: (value) => _selectedStage = value.toInt(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedStage = value.toInt();
+                    });
+                  },
                 ),
                 const SizedBox(height: 12),
                 Row(

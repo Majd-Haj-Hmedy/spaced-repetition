@@ -26,11 +26,11 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
     );
   }
 
-  void _addLecture(String name, int difficulty, String folder) {
+  void _addLecture(String name, int difficulty, String folder, int stage, DateTime start) {
     setState(() {
       setState(() {
         ref.read(lecturesProvider.notifier).addLecture(
-              Lecture(name: name, difficulty: difficulty, folder: folder),
+              Lecture(name: name, difficulty: difficulty, folder: folder, stage: stage, start: start),
             );
       });
     });
@@ -46,7 +46,6 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
         title: Text(widget.folder.name),
       ),
       floatingActionButton: FloatingActionButton(
-        // TODO: Implement the Add 'Lecture screen' and launch it
         onPressed: () {
           _showAddLectureDialog();
         },
@@ -56,7 +55,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
         padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
-          crossAxisSpacing: 20,
+          crossAxisSpacing: 10,
           mainAxisSpacing: 20,
         ),
         itemCount: lectures.length,

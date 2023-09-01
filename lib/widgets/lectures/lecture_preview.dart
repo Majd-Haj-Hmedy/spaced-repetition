@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:repet/models/lecture.dart';
+import 'package:repet/util/date_format.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
 
 class LecturePreview extends StatelessWidget {
@@ -47,17 +48,14 @@ Widget build(BuildContext context) {
         ),
         const SizedBox(height: 12),
         LectureProperty(
-          // TODO: Replace with text: 'Stage ${lecture.current.keys.first}',
-          text: 'Stage 3',
+          text: 'Stage ${lecture.currentStage}',
           icon: Icons.restart_alt,
           color: const Color.fromARGB(255, 82, 131, 235),
         ),
         const SizedBox(height: 6),
         LectureProperty(text: difficultyText, icon: Icons.home, color: difficultyColor),
         const SizedBox(height: 6),
-        // TODO text: lecture.current.values.first.toString().substring(0, 8)
-        // TODO: Format the date string
-        LectureProperty(text: '22 Sep.', icon: Icons.calendar_month, color: const Color.fromARGB(255, 112, 112, 112),),
+        LectureProperty(text: MultipleDateFormat.simpleFormatDate(lecture.currentDate), icon: Icons.calendar_month, color: const Color.fromARGB(255, 112, 112, 112),),
       ],
     ),
   ),);
