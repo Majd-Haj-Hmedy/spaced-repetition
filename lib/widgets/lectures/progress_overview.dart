@@ -18,13 +18,13 @@ class ProgressOverview extends StatelessWidget {
 
     // The date of the event 9/11 is used to check if there's no data assigned 
     // to a particular stage
-    if (lecture.stagesHistory[index] == null) {
+    if (lecture.stagesHistory[index + 1] == null) {
       return 0;
     }
-    if (lecture.stagesHistory[index]!.compareTo(DateTime(2001, 9, 11)) == 0) {
+    if (lecture.stagesHistory[index + 1]!.compareTo(DateTime(2001, 9, 11)) == 0) {
       return -1;
     }
-    if (lecture.stagesHistory[index]!.compareTo(lecture.dates[index]!) == 0) {
+    if (lecture.stagesHistory[index + 1]!.compareTo(lecture.dates[index + 1]!) == 0) {
       return 2;
     } else {
       return 1;
