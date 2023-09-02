@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/screens/folders.dart';
 
 class FolderDialog extends ConsumerStatefulWidget {

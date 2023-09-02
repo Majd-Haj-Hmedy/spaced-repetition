@@ -3,6 +3,7 @@ import 'package:repet/screens/calendar.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
 import 'package:repet/screens/report.dart';
+import 'package:ionicons/ionicons.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -91,7 +92,8 @@ class _MainScreenState extends State<MainScreen> {
             label: _tabNames[0],
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.import_contacts),
+            icon: const Icon(Ionicons.book_outline),
+            activeIcon: const Icon(Ionicons.book),
             label: _tabNames[1],
           ),
           BottomNavigationBarItem(
@@ -100,7 +102,8 @@ class _MainScreenState extends State<MainScreen> {
             label: _tabNames[2],
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.equalizer_outlined),
+            icon: const Icon(Ionicons.analytics_outline),
+            activeIcon: const Icon(Ionicons.analytics),
             label: _tabNames[3],
           ),
         ],
