@@ -64,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // There are problems updating the overdue list just by
                       // notifying the state of the lectures provider, that's
                       // why this method will update the list internally
-                      updateOverdueList: () => setState(() {
+                      updateLectureLists: () => setState(() {
                         overdueList = ref
                             .watch(lecturesProvider.notifier)
                             .fetchLecturesBeforeDate(dayNow);
@@ -92,8 +92,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: todayList.length,
-                    itemBuilder: (context, index) =>
-                        LectureActionItem(lecture: todayList[index], due: 0),
+                    itemBuilder: (context, index) => LectureActionItem(
+                      lecture: todayList[index],
+                      due: 0,
+                      updateLectureLists: () => setState(() {
+                        todayList = ref
+                            .read(lecturesProvider.notifier)
+                            .fetchLecturesByDate(dayNow);
+                      }),
+                    ),
                   ),
             const SizedBox(height: 12),
             Text(

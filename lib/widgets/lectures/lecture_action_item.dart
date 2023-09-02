@@ -9,7 +9,7 @@ import '../../screens/details.dart';
 
 class LectureActionItem extends ConsumerWidget {
   final Lecture lecture;
-  final void Function()? updateOverdueList;
+  final void Function()? updateLectureLists;
 
   /// This integer is used to differentiate overdue tasks from due today tasks and upcoming ones
   /// -1 refers to 'delayed'
@@ -19,7 +19,7 @@ class LectureActionItem extends ConsumerWidget {
   const LectureActionItem({
     required this.lecture,
     required this.due,
-    this.updateOverdueList,
+    this.updateLectureLists,
     super.key,
   });
 
@@ -27,7 +27,7 @@ class LectureActionItem extends ConsumerWidget {
     if (due == 0) {
       return () {
         lecture.advance();
-        ref.read(lecturesProvider.notifier).notifyState();
+        updateLectureLists!();
       };
     }
 
@@ -43,7 +43,7 @@ class LectureActionItem extends ConsumerWidget {
         lastDate: DateTime.now(),
       ).then((date) {
         lecture.lateAdvance(date ?? DateTime.now());
-        updateOverdueList!();
+        updateLectureLists!();
       });
     };
   }
@@ -52,7 +52,7 @@ class LectureActionItem extends ConsumerWidget {
     if (due == 0 || due == -1) {
       return () {
         lecture.skip();
-        ref.read(lecturesProvider.notifier).notifyState();
+        updateLectureLists!();
       };
     }
 
@@ -61,7 +61,8 @@ class LectureActionItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lectureFolder = ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
+    final lectureFolder =
+        ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
