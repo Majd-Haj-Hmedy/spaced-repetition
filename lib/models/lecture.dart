@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 class Lecture {
   final String id;
   String name;
-  final String folder;
+  final String folderID;
   final int difficulty;
 
   int currentStage;
@@ -25,7 +25,7 @@ class Lecture {
   Lecture({
     required this.name,
     required this.difficulty,
-    required this.folder,
+    required this.folderID,
     required DateTime start,
     required int stage,
   })  : id = const Uuid().v4(),

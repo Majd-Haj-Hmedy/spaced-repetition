@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/screens/folders.dart';
 
-class FolderDialog extends StatefulWidget {
+class FolderDialog extends ConsumerStatefulWidget {
   final FolderMode folderMode;
   final void Function(String name) folderActionHandler;
   const FolderDialog({
@@ -11,10 +13,10 @@ class FolderDialog extends StatefulWidget {
   });
 
   @override
-  State<FolderDialog> createState() => _FolderDialogState();
+  ConsumerState<FolderDialog> createState() => _FolderDialogState();
 }
 
-class _FolderDialogState extends State<FolderDialog> {
+class _FolderDialogState extends ConsumerState<FolderDialog> {
   final _nameController = TextEditingController();
 
   @override

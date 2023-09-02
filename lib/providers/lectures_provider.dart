@@ -19,7 +19,7 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
   }
 
   List<Lecture> fetchLecturesByFolder(Folder folder) {
-    return state.where((element) => element.folder == folder.name).toList();
+    return state.where((element) => element.folderID == folder.id).toList();
   }
 
   List<Lecture> fetchLecturesByDate(DateTime date) {

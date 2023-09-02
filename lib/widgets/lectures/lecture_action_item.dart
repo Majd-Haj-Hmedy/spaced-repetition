@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/util/lecture_difficulty.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
@@ -60,6 +61,7 @@ class LectureActionItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lectureFolder = ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
@@ -101,7 +103,7 @@ class LectureActionItem extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   LectureProperty(
-                    text: lecture.folder,
+                    text: lectureFolder.name,
                     icon: Icons.folder,
                     color: Colors.grey,
                   ),

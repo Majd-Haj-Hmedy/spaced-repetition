@@ -16,7 +16,8 @@ class FoldersScreen extends ConsumerStatefulWidget {
 
 class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   void _addFolder(Folder folder) {
-    ref.read(foldersProvider.notifier).addFolder(folder);
+    final foldersNotifier = ref.read(foldersProvider.notifier);
+    foldersNotifier.addFolder(folder);
   }
 
   void _showAddFolderDialog(FolderMode mode) {

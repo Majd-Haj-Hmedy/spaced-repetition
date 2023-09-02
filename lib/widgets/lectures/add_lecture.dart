@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:repet/util/date_format.dart';
 
 class AddLecture extends StatefulWidget {
-  final String folderName;
+  final String folderID;
   final void Function(
     String name,
     int difficulty,
@@ -12,7 +12,7 @@ class AddLecture extends StatefulWidget {
   ) addLectureHandler;
 
   const AddLecture(
-      {required this.folderName, required this.addLectureHandler, super.key});
+      {required this.folderID, required this.addLectureHandler, super.key});
 
   @override
   State<AddLecture> createState() => _AddLectureState();
@@ -32,7 +32,7 @@ class _AddLectureState extends State<AddLecture> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       widget.addLectureHandler(_enteredName, _selectedDifficulty,
-          widget.folderName, _selectedStage, _selectedDate);
+          widget.folderID, _selectedStage, _selectedDate);
     }
   }
 

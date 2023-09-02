@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/util/date_format.dart';
 import 'package:repet/util/lecture_difficulty.dart';
 import 'package:repet/widgets/lectures/detailed_property.dart';
@@ -6,12 +8,13 @@ import 'package:repet/widgets/lectures/progress_overview.dart';
 
 import '../models/lecture.dart';
 
-class LectureDetails extends StatelessWidget {
+class LectureDetails extends ConsumerWidget {
   final Lecture lecture;
   const LectureDetails({required this.lecture, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lectureFolder = ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(lecture.name),
@@ -28,7 +31,7 @@ class LectureDetails extends StatelessWidget {
             const SizedBox(height: 8),
             DetailedLectureProperty(
               description: 'Folder',
-              value: lecture.folder,
+              value: lectureFolder.name,
               color: Colors.grey,
             ),
             const SizedBox(height: 8),

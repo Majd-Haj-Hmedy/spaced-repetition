@@ -23,7 +23,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) => AddLecture(
-          folderName: widget.folder.name, addLectureHandler: _addLecture),
+          folderID: widget.folder.id, addLectureHandler: _addLecture),
     );
   }
 
@@ -35,7 +35,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
               Lecture(
                   name: name,
                   difficulty: difficulty,
-                  folder: folder,
+                  folderID: folder,
                   stage: stage,
                   start: start),
             );
