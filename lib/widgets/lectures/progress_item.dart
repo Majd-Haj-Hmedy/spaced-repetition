@@ -30,13 +30,13 @@ class ProgressItem extends StatelessWidget {
   Color getColor() {
     switch (status) {
       case -1:
-        return RepetColors.status_no_data;
+        return RepetColors.statusNoData;
       case 0:
-        return RepetColors.status_skipped;
+        return RepetColors.statusSkipped;
       case 1:
-        return RepetColors.status_delayed;
+        return RepetColors.statusDelayed;
       case 2:
-        return RepetColors.status_check;
+        return RepetColors.statusCheck;
       default:
         return Colors.black;
     }
@@ -61,34 +61,40 @@ class ProgressItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: getColor(),
-              ),
-              child: Icon(getIcon()),
+    return Column(
+      children: [
+        Card(
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: getColor(),
+                  ),
+                  child: Icon(getIcon()),
+                ),
+                const Spacer(),
+                Text(
+                  getDay(),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const Spacer(),
+                Text(
+                  date,
+                  style:
+                      TextStyle(fontSize: 14, color: RepetColors.statusNoData),
+                ),
+              ],
             ),
-            const Spacer(),
-            Text(
-              getDay(),
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Spacer(),
-            Text(
-              date,
-              style: TextStyle(fontSize: 14, color: RepetColors.status_no_data),
-            ),
-          ],
+          ),
         ),
-      ),
+        // if (index != 4) Image.asset('assets/chain.png'),
+      ],
     );
   }
 }

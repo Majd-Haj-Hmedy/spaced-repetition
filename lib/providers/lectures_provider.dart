@@ -22,8 +22,24 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
     return state.where((element) => element.folder == folder.name).toList();
   }
 
+  List<Lecture> fetchLecturesByDate(DateTime date) {
+    return state
+        .where((lecture) => lecture.currentDate.compareTo(date) == 0)
+        .toList();
+  }
+
+  List<Lecture> fetchLecturesBeforeDate(DateTime date) {
+    return state
+        .where((lecture) => lecture.currentDate.compareTo(date) < 0)
+        .toList();
+  }
+
   void advanceLecture(Lecture lecture) {
     lecture.advance();
+    state = [...state];
+  }
+
+  void notifyState() {
     state = [...state];
   }
 }

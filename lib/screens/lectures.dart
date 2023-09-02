@@ -62,6 +62,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
         padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
+          mainAxisExtent: 170,
           crossAxisSpacing: 10,
           mainAxisSpacing: 20,
         ),

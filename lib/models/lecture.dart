@@ -9,13 +9,17 @@ class Lecture {
   int currentStage;
   DateTime currentDate;
 
-  // This map stores all the entries in which the lecture should move
-  // through the stages that are left
+  /*
+  This map stores all the entries in which the lecture should move
+  through the stages that are left
+  */
   final Map<int, DateTime> dates;
 
-  // This map stores all the entries in which the lecture had already moved
-  // through, the date is used to check whether the stage was completed in-time,
-  // delayed, or not done (in which the dateTime object is null)
+  /*
+  This map stores all the entries in which the lecture had already moved
+  through, the date is used to check whether the stage was completed in-time,
+  delayed, or not done (in which the dateTime object is null)
+  */
   final Map<int, DateTime?> stagesHistory;
 
   Lecture({
@@ -80,6 +84,23 @@ class Lecture {
     final dateNow = DateTime.now();
     final dayNow = DateTime(dateNow.year, dateNow.month, dateNow.day);
     stagesHistory[currentStage] = dayNow;
+    if (currentStage < 5) {
+      ++currentStage;
+      currentDate = dates[currentStage]!;
+    }
+  }
+
+  void lateAdvance(DateTime date) {
+    final storedDate = DateTime(date.year, date.month, date.day);
+    stagesHistory[currentStage] = storedDate;
+    if (currentStage < 5) {
+      ++currentStage;
+      currentDate = dates[currentStage]!;
+    }
+  }
+
+  void skip() {
+    stagesHistory[currentStage] = null;
     if (currentStage < 5) {
       ++currentStage;
       currentDate = dates[currentStage]!;

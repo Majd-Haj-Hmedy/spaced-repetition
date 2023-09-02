@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:repet/util/date_format.dart';
+import 'package:repet/util/lecture_difficulty.dart';
 import 'package:repet/widgets/lectures/detailed_property.dart';
-import 'package:repet/widgets/lectures/lecture_item.dart';
 import 'package:repet/widgets/lectures/progress_overview.dart';
 
 import '../models/lecture.dart';
@@ -18,13 +18,12 @@ class LectureDetails extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             DetailedLectureProperty(
               description: 'Difficulty',
-              value: LectureItem.getDifficultyText(lecture),
-              color: LectureItem.getDifficultyColor(lecture),
+              value: LectureDifficulty.getDifficultyText(lecture),
+              color: LectureDifficulty.getDifficultyColor(lecture),
             ),
             const SizedBox(height: 8),
             DetailedLectureProperty(
@@ -49,9 +48,7 @@ class LectureDetails extends StatelessWidget {
               'Repetition overview',
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            Expanded(
-              child: ProgressOverview(lecture: lecture),
-            ),
+            ProgressOverview(lecture: lecture),
           ],
         ),
       ),

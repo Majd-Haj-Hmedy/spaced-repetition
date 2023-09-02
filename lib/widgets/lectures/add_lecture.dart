@@ -60,7 +60,6 @@ class _AddLectureState extends State<AddLecture> {
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Add lecture',
@@ -92,6 +91,7 @@ class _AddLectureState extends State<AddLecture> {
                             'Easy',
                             style: TextStyle(
                               color: Color.fromARGB(255, 73, 159, 104),
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ),
@@ -101,6 +101,7 @@ class _AddLectureState extends State<AddLecture> {
                             'Medium',
                             style: TextStyle(
                               color: Color.fromARGB(255, 255, 175, 33),
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ),
@@ -110,6 +111,7 @@ class _AddLectureState extends State<AddLecture> {
                             'Hard',
                             style: TextStyle(
                               color: Color.fromARGB(255, 221, 81, 71),
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ),

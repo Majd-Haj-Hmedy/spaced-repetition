@@ -3,35 +3,12 @@ import 'package:repet/models/lecture.dart';
 import 'package:repet/screens/details.dart';
 import 'package:repet/util/date_format.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
-
-import '../../constants/colors.dart';
+import '../../util/lecture_difficulty.dart';
 
 class LectureItem extends StatelessWidget {
   final Lecture lecture;
 
   const LectureItem({required this.lecture, super.key});
-
-  static String getDifficultyText(Lecture lecture) {
-    switch (lecture.difficulty) {
-      case 0:
-        return 'Easy';
-      case 1:
-        return 'Medium';
-      default:
-        return 'Hard';
-    }
-  }
-
-  static Color getDifficultyColor(Lecture lecture) {
-    switch (lecture.difficulty) {
-      case 0:
-        return RepetColors.difficulty_easy;
-      case 1:
-        return RepetColors.difficulty_medium;
-      default:
-        return RepetColors.difficulty_hard;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +39,9 @@ class LectureItem extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               LectureProperty(
-                text: getDifficultyText(lecture),
+                text: LectureDifficulty.getDifficultyText(lecture),
                 icon: Icons.psychology,
-                color: getDifficultyColor(lecture),
+                color: LectureDifficulty.getDifficultyColor(lecture),
               ),
               const SizedBox(height: 6),
               LectureProperty(
