@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:repet/util/date_format.dart';
 
+import '../../models/lecture.dart';
+
 class AddLecture extends StatefulWidget {
   final String folderID;
   final void Function(
@@ -9,10 +11,18 @@ class AddLecture extends StatefulWidget {
     String folder,
     int stage,
     DateTime start,
-  ) addLectureHandler;
+  )? addLectureHandler;
 
-  const AddLecture(
-      {required this.folderID, required this.addLectureHandler, super.key});
+  final void Function(String name, int difficulty)? renameLectureHandler;
+  final Lecture? editedLecture;
+
+  const AddLecture({
+    required this.folderID,
+    this.addLectureHandler,
+    this.renameLectureHandler,
+    this.editedLecture,
+    super.key,
+  });
 
   @override
   State<AddLecture> createState() => _AddLectureState();
@@ -28,11 +38,24 @@ class _AddLectureState extends State<AddLecture> {
   // This boolean is used to show dynamic text guiding the user to choose a date
   var _hasChosenDate = false;
 
+  @override
+  void initState() {
+    _enteredName =
+        widget.editedLecture != null ? widget.editedLecture!.name : '';
+    _selectedDifficulty =
+        widget.editedLecture != null ? widget.editedLecture!.difficulty : 0;
+    super.initState();
+  }
+
   void _submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      widget.addLectureHandler(_enteredName, _selectedDifficulty,
-          widget.folderID, _selectedStage, _selectedDate);
+      if (widget.addLectureHandler != null) {
+        widget.addLectureHandler!(_enteredName, _selectedDifficulty,
+            widget.folderID, _selectedStage, _selectedDate);
+      } else {
+        widget.renameLectureHandler!(_enteredName, _selectedDifficulty);
+      }
     }
   }
 
@@ -52,6 +75,8 @@ class _AddLectureState extends State<AddLecture> {
 
   @override
   Widget build(BuildContext context) {
+    var isEditMode = widget.renameLectureHandler != null;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -61,11 +86,12 @@ class _AddLectureState extends State<AddLecture> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Add lecture',
-                  style: TextStyle(fontSize: 24),
+                Text(
+                  isEditMode ? 'Edit Lecture' : 'Add lecture',
+                  style: const TextStyle(fontSize: 24),
                 ),
                 TextFormField(
+                  initialValue: _enteredName,
                   maxLength: 25,
                   decoration: const InputDecoration(
                     label: Text('Lecture Name'),
@@ -124,7 +150,7 @@ class _AddLectureState extends State<AddLecture> {
                     ),
                     const Spacer(),
                     TextButton(
-                      onPressed: _showDatePicker,
+                      onPressed: isEditMode ? null : _showDatePicker,
                       child: Row(
                         children: [
                           Text(
@@ -141,9 +167,12 @@ class _AddLectureState extends State<AddLecture> {
                   ],
                 ),
                 const SizedBox(height: 18),
-                const Text(
+                Text(
                   'Have already progressed? Pick up where you left off',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isEditMode ? Colors.grey : null,
+                  ),
                 ),
                 Slider.adaptive(
                   value: _selectedStage.toDouble(),
@@ -151,11 +180,13 @@ class _AddLectureState extends State<AddLecture> {
                   divisions: 4,
                   max: 5,
                   label: '$_selectedStage',
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedStage = value.toInt();
-                    });
-                  },
+                  onChanged: isEditMode
+                      ? null
+                      : (value) {
+                          setState(() {
+                            _selectedStage = value.toInt();
+                          });
+                        },
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -176,7 +207,9 @@ class _AddLectureState extends State<AddLecture> {
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
                       ),
-                      child: const Text('Add'),
+                      child: Text(
+                        isEditMode ? 'Edit' : 'Add',
+                      ),
                     ),
                   ],
                 ),

@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/lecture.dart';
+import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/details.dart';
 import 'package:repet/util/date_format.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
 import '../../util/lecture_difficulty.dart';
 
-class LectureItem extends StatelessWidget {
+class LectureItem extends ConsumerWidget {
   final Lecture lecture;
+  final void Function(
+    void Function(String name, int difficulty),
+    Lecture lecture,
+  ) showRenameDialog;
+  final VoidCallback reloadLecturesHandler;
 
-  const LectureItem({required this.lecture, super.key});
+  const LectureItem({
+    required this.lecture,
+    required this.showRenameDialog,
+    required this.reloadLecturesHandler,
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
@@ -26,10 +38,39 @@ class LectureItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                lecture.name,
-                style: Theme.of(context).textTheme.bodyLarge,
-                overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Text(
+                    lecture.name,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  PopupMenuButton(
+                    onSelected: (value) => showRenameDialog((name, difficulty) {
+                      ref
+                          .read(lecturesProvider.notifier)
+                          .editLecture(lecture, name, difficulty);
+                      reloadLecturesHandler();
+                    }, lecture),
+                    icon: const Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 0,
+                        child: Text('Edit'),
+                      ),
+                      PopupMenuItem(
+                        child: const Text('Delete'),
+                        onTap: () {
+                          ref
+                              .read(lecturesProvider.notifier)
+                              .deleteLecture(lecture);
+                          reloadLecturesHandler();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               LectureProperty(

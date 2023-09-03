@@ -13,8 +13,9 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
     state = state.where((element) => lecture != element).toList();
   }
 
-  void renameLecture(Lecture lecture, String name) {
+  void editLecture(Lecture lecture, String name, int difficulty) {
     lecture.name = name;
+    lecture.difficulty = difficulty;
     state = [...state];
   }
 

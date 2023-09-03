@@ -4,7 +4,7 @@ class Lecture {
   final String id;
   String name;
   final String folderID;
-  final int difficulty;
+  int difficulty;
 
   int currentStage;
   DateTime currentDate;

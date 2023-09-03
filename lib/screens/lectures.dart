@@ -23,7 +23,24 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) => AddLecture(
-          folderID: widget.folder.id, addLectureHandler: _addLecture),
+        folderID: widget.folder.id,
+        addLectureHandler: _addLecture,
+      ),
+    );
+  }
+
+  void _showEditLectureDialog(
+      void Function(String name, int difficulty) editAction, Lecture lecture) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => AddLecture(
+        folderID: widget.folder.id,
+        renameLectureHandler: (chosenName, chosenDificulty) => editAction(
+          chosenName,
+          chosenDificulty,
+        ),
+        editedLecture: lecture,
+      ),
     );
   }
 
@@ -43,11 +60,15 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final lectures = ref
+  List<Lecture> loadLectures() {
+    return ref
         .watch(lecturesProvider.notifier)
         .fetchLecturesByFolder(widget.folder);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var lectures = loadLectures();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.folder.name),
@@ -61,13 +82,19 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          mainAxisExtent: 170,
+          maxCrossAxisExtent: 210,
+          mainAxisExtent: 200,
           crossAxisSpacing: 10,
           mainAxisSpacing: 20,
         ),
         itemCount: lectures.length,
-        itemBuilder: (context, index) => LectureItem(lecture: lectures[index]),
+        itemBuilder: (context, index) => LectureItem(
+          lecture: lectures[index],
+          showRenameDialog: _showEditLectureDialog,
+          reloadLecturesHandler: () => setState(() {
+            lectures = loadLectures();
+          }),
+        ),
       ),
     );
   }
