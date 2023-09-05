@@ -22,6 +22,34 @@ class LectureItem extends ConsumerWidget {
     super.key,
   });
 
+  void _showDeleteLectureDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Folder'),
+        content: const Text(
+            'This folder and its content can NOT be retrieved\nDo you want to proceed?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(lecturesProvider.notifier).deleteLecture(lecture);
+              reloadLecturesHandler();
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
@@ -47,26 +75,26 @@ class LectureItem extends ConsumerWidget {
                   ),
                   const Spacer(),
                   PopupMenuButton(
-                    onSelected: (value) => showRenameDialog((name, difficulty) {
-                      ref
-                          .read(lecturesProvider.notifier)
-                          .editLecture(lecture, name, difficulty);
-                      reloadLecturesHandler();
-                    }, lecture),
+                    onSelected: (value) {
+                      if (value == 0) {
+                        return showRenameDialog((name, difficulty) {
+                          ref
+                              .read(lecturesProvider.notifier)
+                              .editLecture(lecture, name, difficulty);
+                          reloadLecturesHandler();
+                        }, lecture);
+                      }
+                      return _showDeleteLectureDialog(context, ref);
+                    },
                     icon: const Icon(Icons.more_vert),
                     itemBuilder: (context) => [
                       const PopupMenuItem(
                         value: 0,
                         child: Text('Edit'),
                       ),
-                      PopupMenuItem(
-                        child: const Text('Delete'),
-                        onTap: () {
-                          ref
-                              .read(lecturesProvider.notifier)
-                              .deleteLecture(lecture);
-                          reloadLecturesHandler();
-                        },
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('Delete'),
                       ),
                     ],
                   ),

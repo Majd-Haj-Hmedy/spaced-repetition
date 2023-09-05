@@ -84,15 +84,17 @@ class FolderItem extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            Icons.folder,
-            color: Theme.of(context).colorScheme.primary,
-            size: 100,
+          Padding(
+            padding: const EdgeInsets.only(right: 40),
+            child: Icon(
+              Icons.folder,
+              color: Theme.of(context).colorScheme.primary,
+              size: 100,
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // FIXME: Text is not centered
               const Spacer(),
               Text(
                 folder.name,

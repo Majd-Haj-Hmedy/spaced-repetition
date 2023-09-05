@@ -6,7 +6,12 @@ class MultipleDateFormat {
   static String simpleFormatDate(DateTime date) {
     return _simpleFormatter.format(date);
   }
+
   static String simpleYearFormatDate(DateTime date) {
     return _simpleYearFormatter.format(date);
+  }
+
+  static DateTime simpleYearParseString(String date) {
+    return _simpleYearFormatter.parse(date);
   }
 }

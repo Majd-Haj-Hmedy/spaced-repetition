@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/folders_provider.dart';
+import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/util/lecture_difficulty.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
 import '../../models/lecture.dart';
@@ -24,9 +25,10 @@ class LectureActionItem extends ConsumerWidget {
 
   VoidCallback? _completeAction(BuildContext context, WidgetRef ref) {
     if (due == 0) {
-      return () {
+      return () async {
         lecture.advance();
         updateLectureLists!();
+        await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
       };
     }
 
@@ -40,18 +42,20 @@ class LectureActionItem extends ConsumerWidget {
         initialDate: DateTime.now(),
         firstDate: lecture.currentDate,
         lastDate: DateTime.now(),
-      ).then((date) {
+      ).then((date) async {
         lecture.lateAdvance(date ?? DateTime.now());
         updateLectureLists!();
+        await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
       });
     };
   }
 
   VoidCallback? _skipAction(WidgetRef ref) {
     if (due == 0 || due == -1) {
-      return () {
+      return () async {
         lecture.skip();
         updateLectureLists!();
+        await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
       };
     }
 

@@ -22,6 +22,17 @@ class Lecture {
   */
   final Map<int, DateTime?> stagesHistory;
 
+  Lecture.loaded({
+    required this.id,
+    required this.name,
+    required this.folderID,
+    required this.difficulty,
+    required this.currentStage,
+    required this.currentDate,
+    required this.dates,
+    required this.stagesHistory,
+  });
+
   Lecture({
     required this.name,
     required this.difficulty,
