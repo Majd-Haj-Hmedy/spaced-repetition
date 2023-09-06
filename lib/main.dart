@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/main_screen.dart';
-import 'package:repet/screens/onboarding/main_onboard.dart';
+import 'package:repet/screens/onboard_screen.dart';
 import 'package:repet/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,8 +39,9 @@ class _RepetAppState extends ConsumerState<RepetApp> {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 82, 131, 235),
-            brightness: Brightness.dark),
+          seedColor: const Color.fromARGB(255, 82, 131, 235),
+          brightness: MediaQuery.of(context).platformBrightness,
+        ),
         useMaterial3: true,
       ),
       home: FutureBuilder(
@@ -50,7 +51,7 @@ class _RepetAppState extends ConsumerState<RepetApp> {
             return const SplashScreen();
           }
           if (snapshot.data == true) {
-            return const MainOnboardingScreen();
+            return const OnboardingScreen();
           }
           return const MainScreen();
         },

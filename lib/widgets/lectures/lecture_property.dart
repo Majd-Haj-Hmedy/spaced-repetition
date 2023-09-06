@@ -21,9 +21,13 @@ class LectureProperty extends StatelessWidget {
           color: color,
         ),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: TextStyle(color: color),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 80),
+          child: Text(
+            text,
+            style: TextStyle(color: color),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

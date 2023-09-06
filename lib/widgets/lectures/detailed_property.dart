@@ -20,9 +20,13 @@ class DetailedLectureProperty extends StatelessWidget {
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(width: 4),
-        Text(
-          value,
-          style: TextStyle(color: color, fontSize: 16),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 200),
+          child: Text(
+            value,
+            style: TextStyle(color: color, fontSize: 16),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

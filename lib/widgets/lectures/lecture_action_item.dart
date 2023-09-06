@@ -82,16 +82,20 @@ class LectureActionItem extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    lecture.name,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          // This code checks if the lecture is overdue in which case the
-                          // the lecture name color is set to red
-                          color: due == -1
-                              ? Theme.of(context).colorScheme.error
-                              : null,
-                        ),
-                    overflow: TextOverflow.ellipsis,
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 100),
+                    child: Text(
+                      lecture.name,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            // This code checks if the lecture is overdue in which case the
+                            // the lecture name color is set to red
+                            color: due == -1
+                                ? Theme.of(context).colorScheme.error
+                                : null,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   LectureProperty(

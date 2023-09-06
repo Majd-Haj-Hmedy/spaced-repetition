@@ -47,9 +47,9 @@ class LectureDetails extends ConsumerWidget {
               color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Repetition overview',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: TextStyle(fontSize: 18, color: Theme.of(context).disabledColor),
             ),
             ProgressOverview(lecture: lecture),
           ],

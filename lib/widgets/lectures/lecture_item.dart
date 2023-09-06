@@ -68,10 +68,14 @@ class LectureItem extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    lecture.name,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    overflow: TextOverflow.ellipsis,
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 80),
+                    child: Text(
+                      lecture.name,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const Spacer(),
                   PopupMenuButton(

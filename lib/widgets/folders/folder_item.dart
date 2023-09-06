@@ -96,10 +96,14 @@ class FolderItem extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Spacer(),
-              Text(
-                folder.name,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
+              Container(
+                constraints: const BoxConstraints(maxWidth: 80),
+                child: Text(
+                  folder.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const Spacer(),
               PopupMenuButton(

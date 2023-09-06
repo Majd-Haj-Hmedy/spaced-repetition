@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:repet/constants/colors.dart';
 
-class ProgressItem extends StatelessWidget {
+class ProgressItem extends StatefulWidget {
   final int index;
   final int status;
   final String date;
@@ -12,8 +12,13 @@ class ProgressItem extends StatelessWidget {
     super.key,
   });
 
+  @override
+  State<ProgressItem> createState() => _ProgressItemState();
+}
+
+class _ProgressItemState extends State<ProgressItem> {
   IconData getIcon() {
-    switch (status) {
+    switch (widget.status) {
       case -1:
         return Icons.question_mark;
       case 0:
@@ -28,7 +33,7 @@ class ProgressItem extends StatelessWidget {
   }
 
   Color getColor() {
-    switch (status) {
+    switch (widget.status) {
       case -1:
         return RepetColors.statusNoData;
       case 0:
@@ -43,7 +48,7 @@ class ProgressItem extends StatelessWidget {
   }
 
   String getDay() {
-    switch (index) {
+    switch (widget.index) {
       case 0:
         return '1 Day';
       case 1:
@@ -59,6 +64,21 @@ class ProgressItem extends StatelessWidget {
     }
   }
 
+  String getTooltipText() {
+    switch (widget.status) {
+      case -1:
+        return 'No data';
+      case 0:
+        return 'Skipped';
+      case 1:
+        return widget.date;
+      case 2:
+        return 'Completed in time';
+      default:
+        return '...';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -69,14 +89,29 @@ class ProgressItem extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
+                Tooltip(
+                  message: getTooltipText(),
+                  preferBelow: false,
+                  showDuration: const Duration(seconds: 2),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: getColor(),
+                    color: Colors.black.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  child: Icon(getIcon()),
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: getColor(),
+                    ),
+                    child: Icon(
+                      getIcon(),
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 const Spacer(),
                 Text(
@@ -85,7 +120,7 @@ class ProgressItem extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  date,
+                  widget.date,
                   style:
                       TextStyle(fontSize: 14, color: RepetColors.statusNoData),
                 ),
