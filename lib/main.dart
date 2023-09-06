@@ -40,7 +40,13 @@ class _RepetAppState extends ConsumerState<RepetApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 82, 131, 235),
-          brightness: MediaQuery.of(context).platformBrightness,
+        ),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 82, 131, 235),
+          brightness: Brightness.dark,
         ),
         useMaterial3: true,
       ),
