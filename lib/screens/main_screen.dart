@@ -18,13 +18,13 @@ class _MainScreenState extends State<MainScreen> {
     'folder': 'Select folder',
     'lecture': 'Lecture details',
     'calendar': 'Calendar',
-    'report': 'Report',
+    'report': 'Reports',
   };
   static const List<String> _tabNames = [
     'Home',
     'Lectures',
     'Calendar',
-    'Report'
+    'Reports'
   ];
   var _navIndex = 0;
   var _appBarTitle = 'Home';
@@ -80,30 +80,29 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Text(_appBarTitle),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        // This line allows more then three items in the navbar
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _navIndex,
-        onTap: _updateScreen,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        onDestinationSelected: _updateScreen,
+        destinations: [
+          NavigationDestination(
             icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home_filled),
+            selectedIcon: const Icon(Icons.home_sharp),
             label: _tabNames[0],
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: const Icon(Ionicons.book_outline),
-            activeIcon: const Icon(Ionicons.book),
+            selectedIcon: const Icon(Ionicons.book),
             label: _tabNames[1],
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: const Icon(Icons.calendar_month_outlined),
-            activeIcon: const Icon(Icons.calendar_month_sharp),
+            selectedIcon: const Icon(Icons.calendar_month_sharp),
             label: _tabNames[2],
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: const Icon(Ionicons.analytics_outline),
-            activeIcon: const Icon(Ionicons.analytics),
+            selectedIcon: const Icon(Ionicons.analytics),
             label: _tabNames[3],
           ),
         ],

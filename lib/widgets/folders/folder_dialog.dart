@@ -4,9 +4,11 @@ import 'package:repet/screens/folders.dart';
 
 class FolderDialog extends ConsumerStatefulWidget {
   final FolderMode folderMode;
+  final String? editedFolderName;
   final void Function(String name) folderActionHandler;
   const FolderDialog({
     required this.folderMode,
+    this.editedFolderName,
     required this.folderActionHandler,
     super.key,
   });
@@ -16,7 +18,13 @@ class FolderDialog extends ConsumerStatefulWidget {
 }
 
 class _FolderDialogState extends ConsumerState<FolderDialog> {
-  final _nameController = TextEditingController();
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    _nameController = TextEditingController(text: widget.editedFolderName ?? '');
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -36,7 +44,7 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
             Text(
               widget.folderMode == FolderMode.add
                   ? 'Add Folder'
-                  : 'Edit Folder',
+                  : 'Rename Folder',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -72,7 +80,7 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: Text(
-                      widget.folderMode == FolderMode.add ? 'Add' : 'Edit'),
+                      widget.folderMode == FolderMode.add ? 'Add' : 'Rename'),
                 ),
               ],
             )

@@ -22,6 +22,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
   void _showAddLectureDialog() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) => AddLecture(
         folderID: widget.folder.id,
         addLectureHandler: _addLecture,
@@ -47,16 +48,15 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
   void _addLecture(
       String name, int difficulty, String folder, int stage, DateTime start) {
     setState(() {
-      setState(() {
-        ref.read(lecturesProvider.notifier).addLecture(
-              Lecture(
-                  name: name,
-                  difficulty: difficulty,
-                  folderID: folder,
-                  stage: stage,
-                  start: start),
-            );
-      });
+      ref.read(lecturesProvider.notifier).addLecture(
+            Lecture(
+              name: name,
+              difficulty: difficulty,
+              folderID: folder,
+              stage: stage,
+              start: start,
+            ),
+          );
     });
   }
 

@@ -31,6 +31,7 @@ class FolderItem extends ConsumerWidget {
       builder: (context) => Dialog(
         child: FolderDialog(
           folderMode: FolderMode.edit,
+          editedFolderName: folder.name,
           folderActionHandler: (name) => _renameFolder(folder, name),
         ),
       ),
@@ -114,7 +115,7 @@ class FolderItem extends ConsumerWidget {
                 itemBuilder: (context) => [
                   const PopupMenuItem(
                     value: 0,
-                    child: Text('Edit'),
+                    child: Text('Rename'),
                   ),
                   const PopupMenuItem(
                     value: 1,

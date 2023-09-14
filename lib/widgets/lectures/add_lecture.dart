@@ -64,8 +64,8 @@ class _AddLectureState extends State<AddLecture> {
     _selectedDate = await showDatePicker(
           context: context,
           initialDate: dateNow,
-          firstDate: dateNow.copyWith(day: dateNow.day - 30),
-          lastDate: dateNow.copyWith(month: dateNow.month + 3),
+          firstDate: dateNow.copyWith(day: dateNow.year - 3),
+          lastDate: dateNow.copyWith(month: dateNow.year + 3),
         ) ??
         _selectedDate;
     setState(() {
@@ -77,146 +77,155 @@ class _AddLectureState extends State<AddLecture> {
   Widget build(BuildContext context) {
     var isEditMode = widget.renameLectureHandler != null;
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  isEditMode ? 'Edit Lecture' : 'Add lecture',
-                  style: const TextStyle(fontSize: 24),
-                ),
-                TextFormField(
-                  initialValue: _enteredName,
-                  maxLength: 25,
-                  decoration: const InputDecoration(
-                    label: Text('Lecture Name'),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 20,
+          left: 20,
+          right: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isEditMode ? 'Edit Lecture' : 'Add lecture',
+                    style: const TextStyle(fontSize: 24),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().length < 2) {
-                      return 'Name must be longer than 2 characters';
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) => _enteredName = newValue!,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    DropdownButton(
-                      icon: const Icon(Icons.arrow_drop_down),
-                      value: _selectedDifficulty,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 0,
-                          child: Text(
-                            'Easy',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 73, 159, 104),
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 1,
-                          child: Text(
-                            'Medium',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 175, 33),
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 2,
-                          child: Text(
-                            'Hard',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 221, 81, 71),
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedDifficulty = value ?? _selectedDifficulty;
-                        });
-                      },
+                  TextFormField(
+                    autofocus: true,
+                    initialValue: _enteredName,
+                    maxLength: 25,
+                    decoration: const InputDecoration(
+                      label: Text('Lecture Name'),
                     ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: isEditMode ? null : _showDatePicker,
-                      child: Row(
-                        children: [
-                          Text(
-                            _hasChosenDate
-                                ? MultipleDateFormat.simpleYearFormatDate(
-                                    _selectedDate)
-                                : 'Select start date',
+                    validator: (value) {
+                      if (value == null || value.trim().length < 2) {
+                        return 'Name must be longer than 2 characters';
+                      }
+                      return null;
+                    },
+                    onSaved: (newValue) => _enteredName = newValue!,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      DropdownButton(
+                        icon: const Icon(Icons.arrow_drop_down),
+                        value: _selectedDifficulty,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text(
+                              'Easy',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 73, 159, 104),
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          const Icon(Icons.calendar_month),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text(
+                              'Medium',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 175, 33),
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 2,
+                            child: Text(
+                              'Hard',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 221, 81, 71),
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  'Have already progressed? Pick up where you left off',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isEditMode ? Colors.grey : null,
-                  ),
-                ),
-                Slider.adaptive(
-                  value: _selectedStage.toDouble(),
-                  min: 1,
-                  divisions: 4,
-                  max: 5,
-                  label: '$_selectedStage',
-                  onChanged: isEditMode
-                      ? null
-                      : (value) {
+                        onChanged: (value) {
                           setState(() {
-                            _selectedStage = value.toInt();
+                            _selectedDifficulty = value ?? _selectedDifficulty;
                           });
                         },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        _submit();
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
                       ),
-                      child: Text(
-                        isEditMode ? 'Edit' : 'Add',
+                      const Spacer(),
+                      TextButton(
+                        onPressed: isEditMode ? null : _showDatePicker,
+                        child: Row(
+                          children: [
+                            Text(
+                              _hasChosenDate
+                                  ? MultipleDateFormat.simpleYearFormatDate(
+                                      _selectedDate)
+                                  : 'Select start date',
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(Icons.calendar_month),
+                          ],
+                        ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Have already progressed? Pick up where you left off',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isEditMode ? Colors.grey : null,
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  Slider.adaptive(
+                    value: _selectedStage.toDouble(),
+                    min: 1,
+                    divisions: 4,
+                    max: 5,
+                    label: '$_selectedStage',
+                    onChanged: isEditMode
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _selectedStage = value.toInt();
+                            });
+                          },
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          _submit();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        child: Text(
+                          isEditMode ? 'Edit' : 'Add',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
