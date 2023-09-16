@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:repet/screens/calendar.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
 import 'package:repet/screens/report.dart';
@@ -17,15 +16,9 @@ class _MainScreenState extends State<MainScreen> {
     'home': 'Home',
     'folder': 'Select folder',
     'lecture': 'Lecture details',
-    'calendar': 'Calendar',
     'report': 'Reports',
   };
-  static const List<String> _tabNames = [
-    'Home',
-    'Lectures',
-    'Calendar',
-    'Reports'
-  ];
+  static const List<String> _tabNames = ['Home', 'Lectures', 'Reports'];
   var _navIndex = 0;
   var _appBarTitle = 'Home';
 
@@ -49,9 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         key = 'folder';
         break;
       case 2:
-        key = 'calendar';
-        break;
-      case 3:
         key = 'report';
         break;
     }
@@ -69,9 +59,6 @@ class _MainScreenState extends State<MainScreen> {
         activeScreen = const FoldersScreen();
         break;
       case 2:
-        activeScreen = const CalendarScreen();
-        break;
-      case 3:
         activeScreen = const ReportScreen();
         break;
     }
@@ -96,14 +83,9 @@ class _MainScreenState extends State<MainScreen> {
             label: _tabNames[1],
           ),
           NavigationDestination(
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month_sharp),
-            label: _tabNames[2],
-          ),
-          NavigationDestination(
             icon: const Icon(Ionicons.analytics_outline),
             selectedIcon: const Icon(Ionicons.analytics),
-            label: _tabNames[3],
+            label: _tabNames[2],
           ),
         ],
       ),

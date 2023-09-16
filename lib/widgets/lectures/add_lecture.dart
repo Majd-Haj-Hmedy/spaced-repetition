@@ -64,8 +64,8 @@ class _AddLectureState extends State<AddLecture> {
     _selectedDate = await showDatePicker(
           context: context,
           initialDate: dateNow,
-          firstDate: dateNow.copyWith(day: dateNow.year - 3),
-          lastDate: dateNow.copyWith(month: dateNow.year + 3),
+          firstDate: dateNow.subtract(const Duration(days: 1095)),
+          lastDate: dateNow.add(const Duration(days: 1095)),
         ) ??
         _selectedDate;
     setState(() {
@@ -83,7 +83,7 @@ class _AddLectureState extends State<AddLecture> {
           top: 20,
           left: 20,
           right: 20,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
         ),
         child: Column(
           children: [

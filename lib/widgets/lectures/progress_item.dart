@@ -5,10 +5,12 @@ class ProgressItem extends StatefulWidget {
   final int index;
   final int status;
   final String date;
+  final String? delayedDate;
   const ProgressItem({
     required this.index,
     required this.status,
     required this.date,
+    this.delayedDate,
     super.key,
   });
 
@@ -71,7 +73,7 @@ class _ProgressItemState extends State<ProgressItem> {
       case 0:
         return 'Skipped';
       case 1:
-        return widget.date;
+        return widget.delayedDate!;
       case 2:
         return 'Completed in time';
       default:

@@ -15,6 +15,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _onboardPagesController = PageController();
 
   @override
+  void dispose() {
+    _onboardPagesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
@@ -68,26 +74,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 controller: _onboardPagesController,
                 itemBuilder: (BuildContext context, int pageIndex) {
-                  return Center(child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Image.asset(onboardList[pageIndex].image),
-                      const SizedBox(height: 50),
-                      Text(
-                        onboardList[pageIndex].title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        onboardList[pageIndex].content,
-                        style: TextStyle(
-                          color: Theme.of(context).disabledColor,
+                  return Center(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        Image.asset(onboardList[pageIndex].image),
+                        const SizedBox(height: 50),
+                        Text(
+                          onboardList[pageIndex].title,
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),);
+                        const SizedBox(height: 10),
+                        Text(
+                          onboardList[pageIndex].content,
+                          style: TextStyle(
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
                 },
               ),
             ),
@@ -118,7 +126,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   const Spacer(),
                   TextButton.icon(
                     onPressed: loadNextOnboard,
-                    style: TextButton.styleFrom(alignment: Alignment.centerRight),
+                    style:
+                        TextButton.styleFrom(alignment: Alignment.centerRight),
                     // It looks weird but the icon should be to the right and the
                     // text to the left, not an elegant solution but a working one
                     // for the mean time

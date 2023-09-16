@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/lectures_provider.dart';
-import 'package:repet/util/date_format.dart';
-import 'package:repet/widgets/lectures/lecture_action_item.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../models/lecture.dart';
+import '../widgets/lectures/lecture_action_item.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -12,126 +14,132 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final dateNow = DateTime.now().removeTime();
+  late DateTime _selectedDate;
+  var lecturesList = <Lecture>[];
+
+  @override
+  void initState() {
+    _selectedDate = dateNow;
+    lecturesList = [
+      ...ref
+          .read(lecturesProvider.notifier)
+          .fetchLecturesBeforeDate(_selectedDate),
+      ...ref.read(lecturesProvider.notifier).fetchLecturesByDate(_selectedDate)
+    ];
+    super.initState();
+  }
+
+  List<Lecture> getLectures() {
+    // If the date is today's date, then overdue lectures will be included as well
+    if (_selectedDate.compareTo(dateNow) == 0) {
+      // A list will be returned containing the overdue lectures at first, and the
+      // due today lectures afterwards
+      return [
+        ...ref
+            .read(lecturesProvider.notifier)
+            .fetchLecturesBeforeDate(_selectedDate),
+        ...ref
+            .read(lecturesProvider.notifier)
+            .fetchLecturesByDate(_selectedDate)
+      ];
+    } else {
+      return ref
+          .read(lecturesProvider.notifier)
+          .fetchLecturesByDate(_selectedDate);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final dateNow = DateTime.now();
-    final dayNow = DateTime(dateNow.year, dateNow.month, dateNow.day);
+    // TODO: Handle overdue lectures
+    lecturesList = getLectures();
 
-    var todayList =
-        ref.read(lecturesProvider.notifier).fetchLecturesByDate(dayNow);
-
-    var tomorrowList = ref.watch(lecturesProvider.notifier).fetchLecturesByDate(
-          dayNow.copyWith(day: dayNow.day + 1),
-        );
-
-    var overdueList =
-        ref.watch(lecturesProvider.notifier).fetchLecturesBeforeDate(dayNow);
-    var isOverdue = overdueList.isNotEmpty;
-
-    ref.listen(lecturesProvider, (previous, next) {
-      todayList =
-          ref.read(lecturesProvider.notifier).fetchLecturesByDate(dayNow);
-      tomorrowList = ref.watch(lecturesProvider.notifier).fetchLecturesByDate(
-            dayNow.copyWith(day: dayNow.day + 1),
-          );
-      overdueList =
-          ref.watch(lecturesProvider.notifier).fetchLecturesBeforeDate(dayNow);
-      isOverdue = overdueList.isNotEmpty;
-    });
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            isOverdue
-                ? Text(
-                    'Overdue',
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Theme.of(context).colorScheme.error),
-                  )
-                : Container(),
-            isOverdue
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: overdueList.length,
-                    itemBuilder: (context, index) => LectureActionItem(
-                      lecture: overdueList[index],
-                      due: -1,
-                      // There are problems updating the overdue list just by
-                      // notifying the state of the lectures provider, that's
-                      // why this method will update the list internally
-                      updateLectureLists: () => setState(() {
-                        overdueList = ref
-                            .watch(lecturesProvider.notifier)
-                            .fetchLecturesBeforeDate(dayNow);
-                      }),
-                    ),
-                  )
-                : Container(),
-            isOverdue ? const SizedBox(height: 12) : Container(),
-            Text(
-              'Today | ${MultipleDateFormat.simpleYearFormatDate(dateNow)}',
-              style: const TextStyle(fontSize: 24),
+    return Column(
+      children: [
+        TableCalendar(
+          focusedDay: _selectedDate,
+          firstDay: dateNow,
+          lastDay: DateTime(dateNow.year, 12, 31),
+          calendarFormat: CalendarFormat.week,
+          /*
+          Although the following code may seem redundant, this approach seems like
+          the only one to replace the formater button with a button that sets the
+          current date to today's
+          */
+          availableCalendarFormats: const {
+            CalendarFormat.week: 'Today',
+            CalendarFormat.month: 'Today',
+          },
+          onFormatChanged: (format) {
+            setState(() {
+              _selectedDate = DateTime.now().removeTime();
+            });
+          },
+          selectedDayPredicate: (day) {
+            return isSameDay(_selectedDate, day);
+          },
+          onDaySelected: (selectedDay, focusedDay) {
+            if (!isSameDay(_selectedDate, selectedDay)) {
+              setState(() {
+                _selectedDate = selectedDay.removeTime();
+              });
+            }
+          },
+          weekendDays: const [],
+          headerStyle: HeaderStyle(
+            titleCentered: true,
+            formatButtonTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
             ),
-            const SizedBox(height: 12),
-            todayList.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(30),
-                    child: Center(
-                      child: Text(
-                        'No lectures due today!',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: todayList.length,
-                    itemBuilder: (context, index) => LectureActionItem(
-                      lecture: todayList[index],
-                      due: 0,
-                      updateLectureLists: () => setState(() {
-                        todayList = ref
-                            .read(lecturesProvider.notifier)
-                            .fetchLecturesByDate(dayNow);
-                      }),
-                    ),
-                  ),
-            const SizedBox(height: 12),
-            Text(
-              'Tomorrow | ${MultipleDateFormat.simpleYearFormatDate(
-                dateNow.copyWith(
-                  day: dateNow.day + 1,
-                ),
-              )}',
-              style: const TextStyle(fontSize: 24),
+            formatButtonDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 12),
-            tomorrowList.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(30),
-                    child: Center(
-                      child: Text(
-                        'No lectures due tomorrow!',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: tomorrowList.length,
-                    itemBuilder: (context, index) =>
-                        LectureActionItem(lecture: tomorrowList[index], due: 1),
-                  ),
-          ],
+          ),
         ),
-      ),
+        const Divider(),
+        lecturesList.isEmpty
+            ? const Padding(
+                padding: EdgeInsets.all(30),
+                child: Center(
+                  child: Text(
+                    'No lectures!',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              )
+            : Expanded(
+                child: ListView.builder(
+                  itemCount: lecturesList.length,
+                  itemBuilder: (context, index) => LectureActionItem(
+                    lecture: lecturesList[index],
+                    // The following code has a nested if else statement written
+                    // as ternary operators,
+                    // the first statement checks if the date is today or tomorrow
+                    // if it's today, then the lectures dates are checked to see
+                    // if they're overdue or not
+                    due: _selectedDate.compareTo(DateTime.now().removeTime()) ==
+                            0
+                        ? lecturesList[index].currentDate.compareTo(dateNow) ==
+                                0
+                            ? 0
+                            : -1
+                        : 1,
+                    updateLectureLists: () => setState(() {
+                      lecturesList = ref
+                          .read(lecturesProvider.notifier)
+                          .fetchLecturesByDate(_selectedDate);
+                    }),
+                  ),
+                ),
+              ),
+      ],
     );
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  DateTime removeTime() {
+    return DateTime(year, month, day);
   }
 }
