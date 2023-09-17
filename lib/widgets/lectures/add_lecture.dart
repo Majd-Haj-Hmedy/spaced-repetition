@@ -61,15 +61,18 @@ class _AddLectureState extends State<AddLecture> {
 
   void _showDatePicker() async {
     final dateNow = DateTime.now();
-    _selectedDate = await showDatePicker(
-          context: context,
-          initialDate: dateNow,
-          firstDate: dateNow.subtract(const Duration(days: 1095)),
-          lastDate: dateNow.add(const Duration(days: 1095)),
-        ) ??
-        _selectedDate;
-    setState(() {
-      _hasChosenDate = true;
+    showDatePicker(
+      context: context,
+      initialDate: dateNow,
+      firstDate: dateNow.subtract(const Duration(days: 1095)),
+      lastDate: dateNow.add(const Duration(days: 1095)),
+    ).then((date) {
+      if (date != null) {
+        _selectedDate = date;
+        setState(() {
+          _hasChosenDate = true;
+        });
+      }
     });
   }
 

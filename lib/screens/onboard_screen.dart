@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:repet/data/onbaording_screens.dart';
 import 'package:repet/screens/main_screen.dart';
-import 'package:repet/widgets/onboard_item.dart';
+import 'package:repet/widgets/onboarding/onboard_item.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

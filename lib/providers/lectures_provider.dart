@@ -126,6 +126,11 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
         'current_date': MultipleDateFormat.simpleYearFormatDate(
           lecture.currentDate,
         ),
+        'date1': MultipleDateFormat.simpleYearFormatDate(lecture.dates[1]!),
+        'date2': MultipleDateFormat.simpleYearFormatDate(lecture.dates[2]!),
+        'date3': MultipleDateFormat.simpleYearFormatDate(lecture.dates[3]!),
+        'date4': MultipleDateFormat.simpleYearFormatDate(lecture.dates[4]!),
+        'date5': MultipleDateFormat.simpleYearFormatDate(lecture.dates[5]!),
         'history${lecture.currentStage - 1}':
             lecture.stagesHistory[lecture.currentStage - 1] != null
                 ? MultipleDateFormat.simpleYearFormatDate(

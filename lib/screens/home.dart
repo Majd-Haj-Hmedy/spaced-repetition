@@ -21,12 +21,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     _selectedDate = dateNow;
-    lecturesList = [
-      ...ref
-          .read(lecturesProvider.notifier)
-          .fetchLecturesBeforeDate(_selectedDate),
-      ...ref.read(lecturesProvider.notifier).fetchLecturesByDate(_selectedDate)
-    ];
     super.initState();
   }
 
@@ -52,7 +46,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Handle overdue lectures
     lecturesList = getLectures();
 
     return Column(
@@ -60,7 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         TableCalendar(
           focusedDay: _selectedDate,
           firstDay: dateNow,
-          lastDay: DateTime(dateNow.year, 12, 31),
+          lastDay: dateNow.add(const Duration(days: 365)),
           calendarFormat: CalendarFormat.week,
           /*
           Although the following code may seem redundant, this approach seems like
@@ -99,37 +92,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         const Divider(),
         lecturesList.isEmpty
-            ? const Padding(
-                padding: EdgeInsets.all(30),
-                child: Center(
-                  child: Text(
-                    'No lectures!',
-                    style: TextStyle(fontSize: 18),
-                  ),
+            ? Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Text(
+                  'No lectures!',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               )
             : Expanded(
-                child: ListView.builder(
-                  itemCount: lecturesList.length,
-                  itemBuilder: (context, index) => LectureActionItem(
-                    lecture: lecturesList[index],
-                    // The following code has a nested if else statement written
-                    // as ternary operators,
-                    // the first statement checks if the date is today or tomorrow
-                    // if it's today, then the lectures dates are checked to see
-                    // if they're overdue or not
-                    due: _selectedDate.compareTo(DateTime.now().removeTime()) ==
-                            0
-                        ? lecturesList[index].currentDate.compareTo(dateNow) ==
-                                0
-                            ? 0
-                            : -1
-                        : 1,
-                    updateLectureLists: () => setState(() {
-                      lecturesList = ref
-                          .read(lecturesProvider.notifier)
-                          .fetchLecturesByDate(_selectedDate);
-                    }),
+                child: RefreshIndicator(
+                  onRefresh: () async => lecturesList = getLectures(),
+                  child: ListView.builder(
+                    itemCount: lecturesList.length,
+                    itemBuilder: (context, index) => LectureActionItem(
+                      lecture: lecturesList[index],
+                      // The following code has a nested if else statement written
+                      // as ternary operators,
+                      // the first statement checks if the date is today or tomorrow
+                      // if it's today, then the lectures dates are checked to see
+                      // if they're overdue or not
+                      due: _selectedDate
+                                  .compareTo(DateTime.now().removeTime()) ==
+                              0
+                          ? lecturesList[index]
+                                      .currentDate
+                                      .compareTo(dateNow) ==
+                                  0
+                              ? 0
+                              : -1
+                          : 1,
+                      updateLectureLists: () => setState(() {
+                        lecturesList = ref
+                            .read(lecturesProvider.notifier)
+                            .fetchLecturesByDate(_selectedDate);
+                      }),
+                    ),
                   ),
                 ),
               ),

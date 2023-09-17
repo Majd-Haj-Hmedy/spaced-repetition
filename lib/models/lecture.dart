@@ -104,9 +104,14 @@ class Lecture {
   void lateAdvance(DateTime date) {
     final storedDate = DateTime(date.year, date.month, date.day);
     stagesHistory[currentStage] = storedDate;
+    final delay = storedDate.difference(dates[currentStage]!);
     if (currentStage < 5) {
       ++currentStage;
       currentDate = dates[currentStage]!;
+
+      for (int i = currentStage; i <= 5; i++) {
+        dates[i] = dates[i]!.add(delay);
+      }
     }
   }
 

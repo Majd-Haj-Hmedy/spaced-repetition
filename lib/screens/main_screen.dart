@@ -3,6 +3,7 @@ import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
 import 'package:repet/screens/report.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:repet/widgets/drawer/main_drawer.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -67,6 +68,7 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Text(_appBarTitle),
       ),
+      drawer: const MainDrawer(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _navIndex,
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

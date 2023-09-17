@@ -14,7 +14,8 @@ class LectureDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lectureFolder = ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
+    final lectureFolder =
+        ref.watch(foldersProvider.notifier).getFolderByID(lecture.folderID)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(lecture.name),
@@ -47,9 +48,11 @@ class LectureDetails extends ConsumerWidget {
               color: Theme.of(context).colorScheme.error,
             ),
             const SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               'Repetition overview',
-              style: TextStyle(fontSize: 18, color: Theme.of(context).disabledColor),
+              style: TextStyle(
+                  fontSize: 18, color: Theme.of(context).disabledColor),
             ),
             ProgressOverview(lecture: lecture),
           ],

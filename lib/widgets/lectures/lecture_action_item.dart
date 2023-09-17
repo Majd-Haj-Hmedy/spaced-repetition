@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
-import 'package:repet/screens/home.dart';
 import 'package:repet/util/lecture_difficulty.dart';
 import 'package:repet/widgets/lectures/lecture_property.dart';
 import '../../models/lecture.dart';
@@ -44,9 +43,11 @@ class LectureActionItem extends ConsumerWidget {
         firstDate: lecture.currentDate,
         lastDate: DateTime.now(),
       ).then((date) async {
-        lecture.lateAdvance(date ?? DateTime.now());
-        updateLectureLists!();
-        await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
+        if (date != null) {
+          lecture.lateAdvance(date);
+          updateLectureLists!();
+          await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
+        }
       });
     };
   }
@@ -121,11 +122,15 @@ class LectureActionItem extends ConsumerWidget {
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _completeAction(context, ref),
-                icon: const Icon(Icons.check),
+                icon: Icon(due == -1 ? Icons.history : Icons.check),
                 label: const Text('Complete'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: due == -1
+                      ? const Color(0xFFF7b217)
+                      : Theme.of(context).colorScheme.primary,
+                  foregroundColor: due == -1
+                      ? const Color.fromARGB(255, 110, 78, 5)
+                      : Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(width: 12),

@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/folders_provider.dart';
@@ -7,16 +8,24 @@ import 'package:repet/screens/onboard_screen.dart';
 import 'package:repet/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final savedThemeMode = await AdaptiveTheme.getThemeMode();
   runApp(
-    const ProviderScope(
-      child: RepetApp(),
+    ProviderScope(
+      child: RepetApp(
+        savedThemeMode: savedThemeMode,
+      ),
     ),
   );
 }
 
 class RepetApp extends ConsumerStatefulWidget {
-  const RepetApp({super.key});
+  final AdaptiveThemeMode? savedThemeMode;
+  const RepetApp({
+    required this.savedThemeMode,
+    super.key,
+  });
 
   @override
   ConsumerState<RepetApp> createState() => _RepetAppState();
@@ -36,31 +45,36 @@ class _RepetAppState extends ConsumerState<RepetApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
+    return AdaptiveTheme(
+      light: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 82, 131, 235),
         ),
         useMaterial3: true,
       ),
-      darkTheme: ThemeData(
+      dark: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 82, 131, 235),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
       ),
-      home: FutureBuilder(
-        future: loadDataFromDB(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SplashScreen();
-          }
-          if (snapshot.data == true) {
-            return const OnboardingScreen();
-          }
-          return const MainScreen();
-        },
+      initial: widget.savedThemeMode ?? AdaptiveThemeMode.dark,
+      builder: (light, dark) => MaterialApp(
+        theme: light,
+        darkTheme: dark,
+        home: FutureBuilder(
+          future: loadDataFromDB(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SplashScreen();
+            }
+            if (snapshot.data == true) {
+              return const OnboardingScreen();
+            }
+            return const MainScreen();
+          },
+        ),
       ),
     );
   }
