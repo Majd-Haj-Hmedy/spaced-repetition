@@ -13,12 +13,15 @@ class LectureItem extends ConsumerWidget {
     void Function(String name, int difficulty),
     Lecture lecture,
   ) showRenameDialog;
+
   final VoidCallback reloadLecturesHandler;
+  final bool firstLaunch;
 
   const LectureItem({
     required this.lecture,
     required this.showRenameDialog,
     required this.reloadLecturesHandler,
+    required this.firstLaunch,
     super.key,
   });
 
@@ -50,17 +53,21 @@ class LectureItem extends ConsumerWidget {
     );
   }
 
+  void _openLectureDetails(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LectureDetails(lecture: lecture),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LectureDetails(lecture: lecture),
-          ),
-        ),
+        onTap: () =>_openLectureDetails(context),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -118,7 +125,8 @@ class LectureItem extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               LectureProperty(
-                text: MultipleDateFormat.simpleFormatDate(lecture.currentDate),
+                text: MultipleDateFormat.simpleFormatDate(
+                    lecture.currentDate),
                 icon: Icons.calendar_month,
                 color: Colors.grey,
               ),

@@ -44,6 +44,8 @@ dependencies:
   shared_preferences: ^2.2.1
   table_calendar: ^3.0.9
   adaptive_theme: ^3.4.0
+  url_launcher: ^6.1.14
+  showcaseview: ^2.0.3
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +73,7 @@ flutter:
   assets:
     - assets/chain.png
     - assets/repet.png
+    - assets/repet_logo.png
     - assets/onboard/folders_light.jpg
     - assets/onboard/graph_dark.png
     - assets/onboard/graph_light.png

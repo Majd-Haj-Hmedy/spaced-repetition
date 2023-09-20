@@ -1,25 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
 import 'package:repet/screens/report.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:repet/widgets/drawer/main_drawer.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainScreen extends ConsumerStatefulWidget {
+  final bool firstLaunch;
+  const MainScreen({
+    required this.firstLaunch,
+    super.key,
+  });
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
+  final _onboardKey = GlobalKey();
+
   static const Map<String, String> _appBarTitleOptions = {
     'home': 'Home',
     'folder': 'Select folder',
-    'lecture': 'Lecture details',
     'report': 'Reports',
   };
-  static const List<String> _tabNames = ['Home', 'Lectures', 'Reports'];
+  static const List<String> _tabNames = [
+    'Home',
+    'Lectures',
+    'Reports',
+  ];
   var _navIndex = 0;
   var _appBarTitle = 'Home';
 
@@ -50,6 +61,16 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    if (widget.firstLaunch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([_onboardKey]);
+      });
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget activeScreen = const HomeScreen();
     switch (_navIndex) {
@@ -57,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
         activeScreen = const HomeScreen();
         break;
       case 1:
-        activeScreen = const FoldersScreen();
+        activeScreen = FoldersScreen(firstLaunch: widget.firstLaunch);
         break;
       case 2:
         activeScreen = const ReportScreen();
@@ -79,10 +100,16 @@ class _MainScreenState extends State<MainScreen> {
             selectedIcon: const Icon(Icons.home_sharp),
             label: _tabNames[0],
           ),
-          NavigationDestination(
-            icon: const Icon(Ionicons.book_outline),
-            selectedIcon: const Icon(Ionicons.book),
-            label: _tabNames[1],
+          Showcase(
+            key: _onboardKey,
+            description: 'Go to the lectures ',
+            onTargetClick: () => _updateScreen(1),
+            disposeOnTap: true,
+            child: NavigationDestination(
+              icon: const Icon(Ionicons.book_outline),
+              selectedIcon: const Icon(Ionicons.book),
+              label: _tabNames[1],
+            ),
           ),
           NavigationDestination(
             icon: const Icon(Ionicons.analytics_outline),

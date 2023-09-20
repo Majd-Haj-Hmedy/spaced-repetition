@@ -6,23 +6,31 @@ import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/lectures.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 // ignore: must_be_immutable
-class FolderItem extends ConsumerWidget {
+class FolderItem extends ConsumerStatefulWidget {
   final Folder folder;
-  FolderItem({
+  final bool firstLaunch;
+  const FolderItem({
     required this.folder,
+    required this.firstLaunch,
     super.key,
   });
 
-  late WidgetRef widRef;
+  @override
+  ConsumerState<FolderItem> createState() => _FolderItemState();
+}
+
+class _FolderItemState extends ConsumerState<FolderItem> {
+  final _onboardKey = GlobalKey();
 
   void _deleteFolder() {
-    widRef.read(foldersProvider.notifier).removeFolder(folder);
+    ref.read(foldersProvider.notifier).removeFolder(widget.folder);
   }
 
   void _renameFolder(Folder folder, String name) {
-    widRef.read(foldersProvider.notifier).renameFolder(folder, name);
+    ref.read(foldersProvider.notifier).renameFolder(folder, name);
   }
 
   void _showRenameDialog(BuildContext context) {
@@ -31,8 +39,8 @@ class FolderItem extends ConsumerWidget {
       builder: (context) => Dialog(
         child: FolderDialog(
           folderMode: FolderMode.edit,
-          editedFolderName: folder.name,
-          folderActionHandler: (name) => _renameFolder(folder, name),
+          editedFolderName: widget.folder.name,
+          folderActionHandler: (name) => _renameFolder(widget.folder, name),
         ),
       ),
     );
@@ -53,12 +61,12 @@ class FolderItem extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               _deleteFolder();
-              final lecturesList = widRef
+              final lecturesList = ref
                   .read(lecturesProvider.notifier)
-                  .fetchLecturesByFolder(folder);
+                  .fetchLecturesByFolder(widget.folder);
 
               for (final lecture in lecturesList) {
-                widRef.read(lecturesProvider.notifier).deleteLecture(lecture);
+                ref.read(lecturesProvider.notifier).deleteLecture(lecture);
               }
               Navigator.pop(context);
             },
@@ -72,60 +80,82 @@ class FolderItem extends ConsumerWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    widRef = ref;
-    return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LecturesScreen(folder: folder),
+  void _openLecturesScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LecturesScreen(
+          folder: widget.folder,
+          firstLaunch: widget.firstLaunch,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 40),
-            child: Icon(
-              Icons.folder,
-              color: Theme.of(context).colorScheme.primary,
-              size: 100,
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.firstLaunch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([_onboardKey]);
+      });
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: _openLecturesScreen,
+      child: Showcase(
+        key: _onboardKey,
+        description: 'Open folder',
+        onTargetClick: _openLecturesScreen,
+        disposeOnTap: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 40),
+              child: Icon(
+                Icons.folder,
+                color: Theme.of(context).colorScheme.primary,
+                size: 100,
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Spacer(),
-              Container(
-                constraints: const BoxConstraints(maxWidth: 80),
-                child: Text(
-                  folder.name,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Spacer(),
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 80),
+                  child: Text(
+                    widget.folder.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              PopupMenuButton(
-                onSelected: (value) => value == 0
-                    ? _showRenameDialog(context)
-                    : _showDeleteDialog(context),
-                icon: const Icon(Icons.more_vert),
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 0,
-                    child: Text('Rename'),
-                  ),
-                  const PopupMenuItem(
-                    value: 1,
-                    child: Text('Delete'),
-                  ),
-                ],
-              ),
-            ],
-          )
-        ],
+                const Spacer(),
+                PopupMenuButton(
+                  onSelected: (value) => value == 0
+                      ? _showRenameDialog(context)
+                      : _showDeleteDialog(context),
+                  icon: const Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 0,
+                      child: Text('Rename'),
+                    ),
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text('Delete'),
+                    ),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

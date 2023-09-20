@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/models/lecture.dart';
 import 'package:repet/providers/lectures_provider.dart';
+import 'package:repet/screens/main_screen.dart';
 import 'package:repet/widgets/lectures/lecture_item.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../models/folder.dart';
 import '../widgets/lectures/add_lecture.dart';
 
 class LecturesScreen extends ConsumerStatefulWidget {
   final Folder folder;
+  final bool firstLaunch;
 
-  const LecturesScreen({required this.folder, super.key});
+  const LecturesScreen({
+    required this.folder,
+    required this.firstLaunch,
+    super.key,
+  });
 
   @override
   ConsumerState<LecturesScreen> createState() {
@@ -19,6 +26,8 @@ class LecturesScreen extends ConsumerStatefulWidget {
 }
 
 class _LecturesScreenState extends ConsumerState<LecturesScreen> {
+  final _onboardKey = GlobalKey();
+
   void _showAddLectureDialog() {
     showModalBottomSheet(
       context: context,
@@ -67,33 +76,63 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
   }
 
   @override
+  void initState() {
+    if (widget.firstLaunch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([_onboardKey]);
+      });
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var lectures = loadLectures();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.folder.name),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddLectureDialog();
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 210,
-          mainAxisExtent: 200,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 20,
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.firstLaunch) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainScreen(firstLaunch: false),
+            ),
+          );
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.folder.name),
         ),
-        itemCount: lectures.length,
-        itemBuilder: (context, index) => LectureItem(
-          lecture: lectures[index],
-          showRenameDialog: _showEditLectureDialog,
-          reloadLecturesHandler: () => setState(() {
-            lectures = loadLectures();
-          }),
+        floatingActionButton: Showcase(
+          key: _onboardKey,
+          description: 'Add a lecture',
+          onTargetClick: _showAddLectureDialog,
+          disposeOnTap: true,
+          child: FloatingActionButton(
+            onPressed: () {
+              _showAddLectureDialog();
+            },
+            child: const Icon(Icons.add),
+          ),
+        ),
+        body: GridView.builder(
+          padding: const EdgeInsets.all(12),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 210,
+            mainAxisExtent: 200,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 20,
+          ),
+          itemCount: lectures.length,
+          itemBuilder: (context, index) => LectureItem(
+            lecture: lectures[index],
+            showRenameDialog: _showEditLectureDialog,
+            reloadLecturesHandler: () => setState(() {
+              lectures = loadLectures();
+            }),
+            firstLaunch: widget.firstLaunch,
+          ),
         ),
       ),
     );

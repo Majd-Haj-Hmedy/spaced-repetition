@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:repet/screens/about.dart';
 import 'package:repet/screens/onboard_screen.dart';
 import 'package:repet/screens/settings.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
+
+import '../../constants/strings.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -20,11 +23,10 @@ class MainDrawer extends StatelessWidget {
                   height: 100,
                 ),
                 Text(
-                  'Repet',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(color: Theme.of(context).colorScheme.primary),
+                  RepetStrings.appName,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
               ],
             ),
@@ -50,9 +52,34 @@ class MainDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsScreen(),
+                  builder: (context) => const SettingsScreen(),
                 ),
               );
+            },
+          ),
+          ListTile(
+            title: const Text('Send feedback'),
+            leading: const Icon(Icons.feedback),
+            onTap: () async {
+              Navigator.pop(context);
+              final url = Uri.parse(
+                  'mailto:majdhajhmidi@gmail.com?subject=Feedback on Repet&body=Hello,\n\nI would like to provide the following feedback:\n');
+              try {
+                await url_launcher.launchUrl(url);
+              } catch (exception) {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.warning),
+                        SizedBox(width: 6),
+                        Text('An error occurred'),
+                      ],
+                    ),
+                  ),
+                );
+              }
             },
           ),
           ListTile(

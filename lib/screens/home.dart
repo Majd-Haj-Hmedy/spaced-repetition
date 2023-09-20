@@ -24,12 +24,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
   }
 
-  List<Lecture> getLectures() {
+  Future<void> getLectures() async {
     // If the date is today's date, then overdue lectures will be included as well
     if (_selectedDate.compareTo(dateNow) == 0) {
       // A list will be returned containing the overdue lectures at first, and the
       // due today lectures afterwards
-      return [
+      lecturesList = [
         ...ref
             .read(lecturesProvider.notifier)
             .fetchLecturesBeforeDate(_selectedDate),
@@ -38,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             .fetchLecturesByDate(_selectedDate)
       ];
     } else {
-      return ref
+      lecturesList = ref
           .read(lecturesProvider.notifier)
           .fetchLecturesByDate(_selectedDate);
     }
@@ -46,91 +46,104 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    lecturesList = getLectures();
-
-    return Column(
-      children: [
-        TableCalendar(
-          focusedDay: _selectedDate,
-          firstDay: dateNow,
-          lastDay: dateNow.add(const Duration(days: 365)),
-          calendarFormat: CalendarFormat.week,
-          /*
-          Although the following code may seem redundant, this approach seems like
-          the only one to replace the formater button with a button that sets the
-          current date to today's
-          */
-          availableCalendarFormats: const {
-            CalendarFormat.week: 'Today',
-            CalendarFormat.month: 'Today',
-          },
-          onFormatChanged: (format) {
-            setState(() {
-              _selectedDate = DateTime.now().removeTime();
-            });
-          },
-          selectedDayPredicate: (day) {
-            return isSameDay(_selectedDate, day);
-          },
-          onDaySelected: (selectedDay, focusedDay) {
-            if (!isSameDay(_selectedDate, selectedDay)) {
-              setState(() {
-                _selectedDate = selectedDay.removeTime();
-              });
-            }
-          },
-          weekendDays: const [],
-          headerStyle: HeaderStyle(
-            titleCentered: true,
-            formatButtonTextStyle: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            formatButtonDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const Divider(),
-        lecturesList.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Text(
-                  'No lectures!',
-                  style: Theme.of(context).textTheme.titleLarge,
+    // Temporary fix for the list building with no data
+    return FutureBuilder(
+      future: getLectures(),
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            TableCalendar(
+              focusedDay: _selectedDate,
+              firstDay: dateNow,
+              lastDay: dateNow.add(const Duration(days: 365)),
+              calendarFormat: CalendarFormat.week,
+              /*
+            Although the following code may seem redundant, this approach seems like
+            the only one to replace the formater button with a button that sets the
+            current date to today's
+            */
+              availableCalendarFormats: const {
+                CalendarFormat.week: 'Today',
+                CalendarFormat.month: 'Today',
+              },
+              onFormatChanged: (format) {
+                setState(() {
+                  _selectedDate = DateTime.now().removeTime();
+                });
+              },
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDate, day);
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                if (!isSameDay(_selectedDate, selectedDay)) {
+                  setState(() {
+                    _selectedDate = selectedDay.removeTime();
+                  });
+                }
+              },
+              weekendDays: const [],
+              headerStyle: HeaderStyle(
+                titleCentered: true,
+                formatButtonTextStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              )
-            : Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async => lecturesList = getLectures(),
-                  child: ListView.builder(
-                    itemCount: lecturesList.length,
-                    itemBuilder: (context, index) => LectureActionItem(
-                      lecture: lecturesList[index],
-                      // The following code has a nested if else statement written
-                      // as ternary operators,
-                      // the first statement checks if the date is today or tomorrow
-                      // if it's today, then the lectures dates are checked to see
-                      // if they're overdue or not
-                      due: _selectedDate
-                                  .compareTo(DateTime.now().removeTime()) ==
-                              0
-                          ? lecturesList[index]
-                                      .currentDate
-                                      .compareTo(dateNow) ==
-                                  0
-                              ? 0
-                              : -1
-                          : 1,
-                      updateLectureLists: () => setState(() {
-                        lecturesList = ref
-                            .read(lecturesProvider.notifier)
-                            .fetchLecturesByDate(_selectedDate);
-                      }),
-                    ),
-                  ),
+                formatButtonDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-      ],
+            ),
+            const Divider(),
+            snapshot.connectionState == ConnectionState.waiting
+                ? const Align(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator.adaptive())
+                : lecturesList.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: Text(
+                          'No lectures!',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      )
+                    : Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {
+                              _selectedDate = _selectedDate;
+                            });
+                          },
+                          child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            itemCount: lecturesList.length,
+                            itemBuilder: (context, index) => LectureActionItem(
+                              lecture: lecturesList[index],
+                              // The following code has a nested if else statement written
+                              // as ternary operators,
+                              // the first statement checks if the date is today or tomorrow
+                              // if it's today, then the lectures dates are checked to see
+                              // if they're overdue or not
+                              due: _selectedDate.compareTo(
+                                          DateTime.now().removeTime()) ==
+                                      0
+                                  ? lecturesList[index]
+                                              .currentDate
+                                              .compareTo(dateNow) ==
+                                          0
+                                      ? 0
+                                      : -1
+                                  : 1,
+                              updateLectureLists: () => setState(() {
+                                lecturesList = ref
+                                    .read(lecturesProvider.notifier)
+                                    .fetchLecturesByDate(_selectedDate);
+                              }),
+                            ),
+                          ),
+                        ),
+                      ),
+          ],
+        );
+      },
     );
   }
 }

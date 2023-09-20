@@ -7,6 +7,7 @@ import 'package:repet/screens/main_screen.dart';
 import 'package:repet/screens/onboard_screen.dart';
 import 'package:repet/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +51,7 @@ class _RepetAppState extends ConsumerState<RepetApp> {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 82, 131, 235),
         ),
+        disabledColor: const Color(0xFF757575),
         useMaterial3: true,
       ),
       dark: ThemeData(
@@ -60,20 +62,25 @@ class _RepetAppState extends ConsumerState<RepetApp> {
         useMaterial3: true,
       ),
       initial: widget.savedThemeMode ?? AdaptiveThemeMode.dark,
-      builder: (light, dark) => MaterialApp(
-        theme: light,
-        darkTheme: dark,
-        home: FutureBuilder(
-          future: loadDataFromDB(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SplashScreen();
-            }
-            if (snapshot.data == true) {
-              return const OnboardingScreen();
-            }
-            return const MainScreen();
-          },
+      builder: (light, dark) => ShowCaseWidget(
+        disableBarrierInteraction: true,
+        builder: Builder(
+          builder: (context) => MaterialApp(
+            theme: light,
+            darkTheme: dark,
+            home: FutureBuilder(
+              future: loadDataFromDB(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SplashScreen();
+                }
+                if (snapshot.data == true) {
+                  return const OnboardingScreen();
+                }
+                return const MainScreen(firstLaunch: false);
+              },
+            ),
+          ),
         ),
       ),
     );

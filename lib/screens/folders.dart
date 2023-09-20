@@ -3,18 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
 import 'package:repet/widgets/folders/folder_item.dart';
+import 'package:showcaseview/showcaseview.dart';
 import '../models/folder.dart';
 
 enum FolderMode { add, edit }
 
 class FoldersScreen extends ConsumerStatefulWidget {
-  const FoldersScreen({super.key});
+  final bool firstLaunch;
+  const FoldersScreen({required this.firstLaunch, super.key});
 
   @override
   ConsumerState<FoldersScreen> createState() => _FoldersScreenState();
 }
 
 class _FoldersScreenState extends ConsumerState<FoldersScreen> {
+  final _onboardKey = GlobalKey();
+
   void _addFolder(Folder folder) {
     final foldersNotifier = ref.read(foldersProvider.notifier);
     foldersNotifier.addFolder(folder);
@@ -35,6 +39,16 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   }
 
   @override
+  void initState() {
+    if (widget.firstLaunch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([_onboardKey]);
+      });
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final folders = ref.watch(foldersProvider);
     return Stack(
@@ -49,14 +63,21 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           itemCount: folders.length,
           itemBuilder: (context, index) => FolderItem(
             folder: folders[index],
+            firstLaunch: widget.firstLaunch,
           ),
         ),
         Positioned(
           bottom: 25,
           right: 25,
-          child: FloatingActionButton(
-            onPressed: () => _showAddFolderDialog(FolderMode.add),
-            child: const Icon(Icons.add),
+          child: Showcase(
+            key: _onboardKey,
+            description: 'Create a folder',
+            onTargetClick: () => _showAddFolderDialog(FolderMode.add),
+            disposeOnTap: true,
+            child: FloatingActionButton(
+              onPressed: () => _showAddFolderDialog(FolderMode.add),
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
       ],
