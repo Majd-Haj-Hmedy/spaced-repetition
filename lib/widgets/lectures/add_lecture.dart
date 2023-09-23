@@ -33,10 +33,12 @@ class _AddLectureState extends State<AddLecture> {
   var _enteredName = '';
   var _selectedDifficulty = 0;
   var _selectedStage = 1;
-  var _selectedDate = DateTime.now();
+  var _selectedStartDate = DateTime.now();
+  var _selectedDueDate = DateTime.now().add(const Duration(days: 30));
 
   // This boolean is used to show dynamic text guiding the user to choose a date
-  var _hasChosenDate = false;
+  var _hasChosenStartDate = false;
+  var _hasChosenDueDate = false;
 
   @override
   void initState() {
@@ -52,25 +54,40 @@ class _AddLectureState extends State<AddLecture> {
       _formKey.currentState!.save();
       if (widget.addLectureHandler != null) {
         widget.addLectureHandler!(_enteredName, _selectedDifficulty,
-            widget.folderID, _selectedStage, _selectedDate);
+            widget.folderID, _selectedStage, _selectedStartDate);
       } else {
         widget.renameLectureHandler!(_enteredName, _selectedDifficulty);
       }
     }
   }
 
-  void _showDatePicker() async {
+  void _showDatePicker({required String mode}) async {
+    final date = mode == 'start' ? _selectedStartDate : _selectedDueDate;
     final dateNow = DateTime.now();
     showDatePicker(
       context: context,
-      initialDate: dateNow,
-      firstDate: dateNow.subtract(const Duration(days: 1095)),
-      lastDate: dateNow.add(const Duration(days: 1095)),
-    ).then((date) {
-      if (date != null) {
-        _selectedDate = date;
+      initialDate: date,
+      firstDate: mode == 'start'
+          ? dateNow.subtract(const Duration(days: 1095))
+          : _selectedStartDate.add(
+              const Duration(days: 14),
+            ),
+      lastDate: mode == 'start'
+          ? dateNow.add(const Duration(days: 1095))
+          : _selectedStartDate.add(const Duration(days: 30)),
+    ).then((pickedDate) {
+      if (pickedDate != null) {
+        if (mode == 'due') {
+          _selectedDueDate = pickedDate;
+          return;
+        }
+        _selectedStartDate = pickedDate;
+        _selectedDueDate = _selectedStartDate.add(const Duration(days: 30));
         setState(() {
-          _hasChosenDate = true;
+          _hasChosenDueDate = true;
+          if (mode == 'start') {
+            _hasChosenStartDate = true;
+          }
         });
       }
     });
@@ -115,59 +132,78 @@ class _AddLectureState extends State<AddLecture> {
                     onSaved: (newValue) => _enteredName = newValue!,
                   ),
                   const SizedBox(height: 12),
+                  DropdownButton(
+                    icon: const Icon(Icons.arrow_drop_down),
+                    value: _selectedDifficulty,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text(
+                          'Easy',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 73, 159, 104),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text(
+                          'Medium',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 175, 33),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text(
+                          'Hard',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 221, 81, 71),
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedDifficulty = value ?? _selectedDifficulty;
+                      });
+                    },
+                  ),
                   Row(
                     children: [
-                      DropdownButton(
-                        icon: const Icon(Icons.arrow_drop_down),
-                        value: _selectedDifficulty,
-                        items: const [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text(
-                              'Easy',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 73, 159, 104),
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 1,
-                            child: Text(
-                              'Medium',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 175, 33),
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 2,
-                            child: Text(
-                              'Hard',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 221, 81, 71),
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedDifficulty = value ?? _selectedDifficulty;
-                          });
-                        },
-                      ),
-                      const Spacer(),
                       TextButton(
-                        onPressed: isEditMode ? null : _showDatePicker,
+                        onPressed: isEditMode
+                            ? null
+                            : () => _showDatePicker(mode: 'start'),
                         child: Row(
                           children: [
                             Text(
-                              _hasChosenDate
+                              _hasChosenStartDate
                                   ? MultipleDateFormat.simpleYearFormatDate(
-                                      _selectedDate)
+                                      _selectedStartDate)
                                   : 'Select start date',
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(Icons.calendar_month),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: isEditMode
+                            ? null
+                            : () => _showDatePicker(mode: 'due'),
+                        child: Row(
+                          children: [
+                            Text(
+                              _hasChosenDueDate
+                                  ? MultipleDateFormat.simpleYearFormatDate(
+                                      _selectedDueDate)
+                                  : 'Select due date',
                             ),
                             const SizedBox(width: 6),
                             const Icon(Icons.calendar_month),

@@ -36,11 +36,12 @@ class MainDrawer extends StatelessWidget {
             leading: const Icon(Icons.play_circle),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const OnboardingScreen(),
                 ),
+                (route) => false,
               );
             },
           ),

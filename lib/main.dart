@@ -1,6 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repet/notifications/notification_service.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/main_screen.dart';
@@ -12,6 +13,7 @@ import 'package:showcaseview/showcaseview.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  NotificationService().initNotification();
   runApp(
     ProviderScope(
       child: RepetApp(

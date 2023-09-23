@@ -51,36 +51,45 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   @override
   Widget build(BuildContext context) {
     final folders = ref.watch(foldersProvider);
-    return Stack(
-      children: [
-        GridView.builder(
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 1,
-            crossAxisSpacing: 30,
-            mainAxisSpacing: 30,
-          ),
-          itemCount: folders.length,
-          itemBuilder: (context, index) => FolderItem(
-            folder: folders[index],
-            firstLaunch: widget.firstLaunch,
-          ),
-        ),
-        Positioned(
-          bottom: 25,
-          right: 25,
-          child: Showcase(
-            key: _onboardKey,
-            description: 'Create a folder',
-            onTargetClick: () => _showAddFolderDialog(FolderMode.add),
-            disposeOnTap: true,
-            child: FloatingActionButton(
-              onPressed: () => _showAddFolderDialog(FolderMode.add),
-              child: const Icon(Icons.add),
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.firstLaunch) {
+          return false;
+        }
+        return true;
+      },
+      child: Stack(
+        children: [
+          GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 1,
+              crossAxisSpacing: 30,
+              mainAxisSpacing: 30,
+            ),
+            itemCount: folders.length,
+            itemBuilder: (context, index) => FolderItem(
+              folder: folders[index],
+              firstLaunch: widget.firstLaunch,
             ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: 25,
+            right: 25,
+            child: Showcase(
+              key: _onboardKey,
+              description: 'Create a folder',
+              onTargetClick: () => _showAddFolderDialog(FolderMode.add),
+              disposeOnTap: true,
+              targetBorderRadius: BorderRadius.circular(16),
+              child: FloatingActionButton(
+                onPressed: () => _showAddFolderDialog(FolderMode.add),
+                child: const Icon(Icons.add),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

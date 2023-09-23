@@ -91,6 +91,9 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
     return WillPopScope(
       onWillPop: () async {
         if (widget.firstLaunch) {
+          if (lectures.isEmpty) {
+            return false;
+          }
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -109,6 +112,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
           description: 'Add a lecture',
           onTargetClick: _showAddLectureDialog,
           disposeOnTap: true,
+          targetBorderRadius: BorderRadius.circular(16),
           child: FloatingActionButton(
             onPressed: () {
               _showAddLectureDialog();
