@@ -67,7 +67,7 @@ class LectureItem extends ConsumerWidget {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: InkWell(
-        onTap: () =>_openLectureDetails(context),
+        onTap: () => _openLectureDetails(context),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -79,7 +79,10 @@ class LectureItem extends ConsumerWidget {
                     constraints: const BoxConstraints(maxWidth: 80),
                     child: Text(
                       lecture.name,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(fontWeight: FontWeight.w500),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -125,8 +128,7 @@ class LectureItem extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               LectureProperty(
-                text: MultipleDateFormat.simpleFormatDate(
-                    lecture.currentDate),
+                text: MultipleDateFormat.simpleFormatDate(lecture.currentDate),
                 icon: Icons.calendar_month,
                 color: Colors.grey,
               ),

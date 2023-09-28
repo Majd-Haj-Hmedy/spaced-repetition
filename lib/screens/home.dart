@@ -29,24 +29,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (_selectedDate.compareTo(dateNow) == 0) {
       // A list will be returned containing the overdue lectures at first, and the
       // due today lectures afterwards
-      lecturesList = [
-        ...ref
-            .read(lecturesProvider.notifier)
-            .fetchLecturesBeforeDate(_selectedDate),
-        ...ref
-            .read(lecturesProvider.notifier)
-            .fetchLecturesByDate(_selectedDate)
-      ];
-    } else {
+      return Future(() {
+        lecturesList = [
+          ...ref
+              .read(lecturesProvider.notifier)
+              .fetchLecturesBeforeDate(_selectedDate),
+          ...ref
+              .read(lecturesProvider.notifier)
+              .fetchLecturesByDate(_selectedDate)
+        ];
+      });
+    }
+    return Future(() {
       lecturesList = ref
           .read(lecturesProvider.notifier)
           .fetchLecturesByDate(_selectedDate);
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Temporary fix for the list building with no data
+    // Fix for the widget building with no data in the list
     return FutureBuilder(
       future: getLectures(),
       builder: (context, snapshot) {
@@ -57,6 +60,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               firstDay: dateNow,
               lastDay: dateNow.add(const Duration(days: 365)),
               calendarFormat: CalendarFormat.week,
+              calendarStyle: CalendarStyle(
+                disabledTextStyle: TextStyle(
+                  color: Theme.of(context).disabledColor,
+                ),
+              ),
               /*
             Although the following code may seem redundant, this approach seems like
             the only one to replace the formater button with a button that sets the

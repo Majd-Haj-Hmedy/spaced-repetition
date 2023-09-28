@@ -98,6 +98,9 @@ class Lecture {
     if (currentStage < 5) {
       ++currentStage;
       currentDate = dates[currentStage]!;
+    } else {
+      // Messy workaround to hide completely done lectures from the overdue lists
+      currentDate = DateTime.now().copyWith(year: 4000);
     }
   }
 
@@ -112,6 +115,8 @@ class Lecture {
       for (int i = currentStage; i <= 5; i++) {
         dates[i] = dates[i]!.add(delay);
       }
+    } else {
+      currentDate = DateTime.now().copyWith(year: 4000);
     }
   }
 
@@ -120,6 +125,8 @@ class Lecture {
     if (currentStage < 5) {
       ++currentStage;
       currentDate = dates[currentStage]!;
+    } else {
+      currentDate = DateTime.now().copyWith(year: 4000);
     }
   }
 }

@@ -129,7 +129,9 @@ class LectureActionItem extends ConsumerWidget {
                       ? const Color(0xFFF7b217)
                       : Theme.of(context).colorScheme.primary,
                   foregroundColor: due == -1
-                      ? const Color.fromARGB(255, 110, 78, 5)
+                      ? Theme.of(context).brightness == Brightness.dark
+                          ? const Color.fromARGB(255, 110, 78, 5)
+                          : Colors.white
                       : Theme.of(context).colorScheme.onPrimary,
                 ),
               ),

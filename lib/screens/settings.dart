@@ -2,6 +2,8 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../notifications/notification_service.dart';
+
 // ignore: must_be_immutable
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -57,6 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _reminders.add('${time.hour}:${time.minute}');
     });
     await _sharedPreferences.setStringList('reminders', _reminders);
+    await _scheduleNotifications();
   }
 
   void _deleteReminder(int index) async {
@@ -64,6 +67,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _reminders.removeAt(index);
     });
     await _sharedPreferences.setStringList('reminders', _reminders);
+    await _scheduleNotifications();
+  }
+
+  Future<void> _scheduleNotifications() async {
+    await NotificationService().cancelAllNotifications();
+    for (int i = 0; i < _reminders.length; i++) {
+      await NotificationService().showScheduledNotification(
+        id: i + 1,
+        title: 'Study time!',
+        body: 'It\'s time to study your lectures',
+        dateTime: DateTime.now().copyWith(
+          hour: int.parse(
+            _reminders[i].substring(0, 2),
+          ),
+          minute: int.parse(
+            _reminders[i].substring(3, 5),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -126,15 +149,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leading: Text(
                       _reminders[i],
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 14),
                     ),
                     trailing: IconButton(
                       onPressed: () => _deleteReminder(i),
                       icon: const Icon(Icons.delete),
-                      style: IconButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.error,
-                      ),
                     ),
                   ),
                 _reminders.length == 3

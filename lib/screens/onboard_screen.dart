@@ -88,9 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         const SizedBox(height: 10),
                         Text(
                           onboardList[pageIndex].content,
-                          style: TextStyle(
-                            color: Theme.of(context).disabledColor,
-                          ),
+                          style: const TextStyle(fontSize: 16),
                           textAlign: TextAlign.center,
                         ),
                       ],

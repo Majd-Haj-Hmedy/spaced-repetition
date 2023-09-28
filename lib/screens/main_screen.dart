@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
 import 'package:repet/screens/report.dart';
@@ -21,8 +22,8 @@ class MainScreen extends ConsumerStatefulWidget {
 class _MainScreenState extends ConsumerState<MainScreen> {
   final _onboardKey = GlobalKey();
 
-  static const Map<String, String> _appBarTitleOptions = {
-    'home': 'Home',
+  static final Map<String, String> _appBarTitleOptions = {
+    'home': 'home_appbar'.i18n(),
     'folder': 'Select folder',
     'report': 'Reports',
   };

@@ -1,6 +1,8 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/notifications/notification_service.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
@@ -48,6 +50,7 @@ class _RepetAppState extends ConsumerState<RepetApp> {
 
   @override
   Widget build(BuildContext context) {
+    LocalJsonLocalization.delegate.directories = ['lib/i18n'];
     return AdaptiveTheme(
       light: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -55,6 +58,10 @@ class _RepetAppState extends ConsumerState<RepetApp> {
         ),
         disabledColor: const Color(0xFF757575),
         useMaterial3: true,
+        cardTheme: const CardTheme(
+          color: Color.fromARGB(255, 246, 246, 246),
+          surfaceTintColor: Colors.transparent,
+        ),
       ),
       dark: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -70,6 +77,16 @@ class _RepetAppState extends ConsumerState<RepetApp> {
           builder: (context) => MaterialApp(
             theme: light,
             darkTheme: dark,
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              LocalJsonLocalization.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ar'),
+            ],
             home: FutureBuilder(
               future: loadDataFromDB(),
               builder: (context, snapshot) {

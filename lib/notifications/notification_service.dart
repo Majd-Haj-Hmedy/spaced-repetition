@@ -1,4 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -18,26 +20,42 @@ class NotificationService {
       iOS: iosInitializationSettings,
     );
 
+    // Initialize the time zone database
+    tz.initializeTimeZones();
+
     await notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (details) async {},
     );
   }
 
-  Future showNotification({
-    int id = 0,
+  Future<void> showScheduledNotification({
+    required int id,
     required String title,
     required String body,
-    required String payload,
+    required DateTime dateTime,
   }) async {
-    return notificationsPlugin.show(id, title, body, notificationDetails);
+    notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(dateTime, tz.local),
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  Future<void> cancelAllNotifications() async {
+    notificationsPlugin.cancelAll();
   }
 
   NotificationDetails get notificationDetails {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'channelId',
-        'channelName',
+        'repet_daily_notifications',
+        'Lectures Reminder',
         importance: Importance.max,
       ),
       iOS: DarwinNotificationDetails(),

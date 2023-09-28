@@ -39,5 +39,12 @@ class DatabaseHelper {
         FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE COMPLETIONS (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL
+      )
+    ''');
   }
 }

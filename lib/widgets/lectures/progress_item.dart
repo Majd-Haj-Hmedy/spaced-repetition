@@ -54,11 +54,11 @@ class _ProgressItemState extends State<ProgressItem> {
       case 0:
         return '1 Day';
       case 1:
-        return '3 Day';
+        return '3 Days';
       case 2:
         return '1 Week';
       case 3:
-        return '2 Week';
+        return '2 Weeks';
       case 4:
         return '1 Month';
       default:

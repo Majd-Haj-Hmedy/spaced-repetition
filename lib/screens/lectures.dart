@@ -43,6 +43,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
       void Function(String name, int difficulty) editAction, Lecture lecture) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) => AddLecture(
         folderID: widget.folder.id,
         renameLectureHandler: (chosenName, chosenDificulty) => editAction(
@@ -94,11 +95,12 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
           if (lectures.isEmpty) {
             return false;
           }
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => const MainScreen(firstLaunch: false),
             ),
+            (route) => false,
           );
         }
         return true;
