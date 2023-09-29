@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -65,14 +66,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: Theme.of(context).disabledColor,
                 ),
               ),
+              locale: Localizations.localeOf(context).languageCode,
               /*
-            Although the following code may seem redundant, this approach seems like
-            the only one to replace the formater button with a button that sets the
-            current date to today's
+                Although the following code may seem redundant, this approach seems like
+                the only one to replace the formater button with a button that sets the
+                current date to today's
             */
-              availableCalendarFormats: const {
-                CalendarFormat.week: 'Today',
-                CalendarFormat.month: 'Today',
+              availableCalendarFormats: {
+                CalendarFormat.week: 'home_calendar_today'.i18n(),
+                CalendarFormat.month: 'home_calendar_today'.i18n(),
               },
               onFormatChanged: (format) {
                 setState(() {

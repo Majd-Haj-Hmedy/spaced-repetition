@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/constants/colors.dart';
 
 class ProgressItem extends StatefulWidget {
@@ -52,15 +53,16 @@ class _ProgressItemState extends State<ProgressItem> {
   String getDay() {
     switch (widget.index) {
       case 0:
-        return '1 Day';
+        return 'lecture_details_progress_day1'.i18n();
       case 1:
-        return '3 Days';
+        return 'lecture_details_progress_day3'.i18n();
       case 2:
-        return '1 Week';
+        return 'lecture_details_progress_week1'.i18n();
       case 3:
-        return '2 Weeks';
+        return 'lecture_details_progress_week2'.i18n();
       case 4:
-        return '1 Month';
+        return 'lecture_details_progress_month1'.i18n();
+      // This will never execute
       default:
         return 'Default value';
     }
@@ -69,13 +71,14 @@ class _ProgressItemState extends State<ProgressItem> {
   String getTooltipText() {
     switch (widget.status) {
       case -1:
-        return 'No data';
+        return 'lecture_details_progress_tooltip_no_data'.i18n();
       case 0:
-        return 'Skipped';
+        return 'lecture_details_progress_tooltip_skipped'.i18n();
       case 1:
         return widget.delayedDate!;
       case 2:
-        return 'Completed in time';
+        return 'lecture_details_progress_tooltip_completed_in_time'.i18n();
+      // This will never execute
       default:
         return '...';
     }

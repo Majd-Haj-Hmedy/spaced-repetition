@@ -45,10 +45,14 @@ class ProgressOverview extends StatelessWidget {
         child: ProgressItem(
           index: index,
           status: stageState(index),
-          date: MultipleDateFormat.simpleFormatDate(lecture.dates[index + 1]!),
+          date: MultipleDateFormat.simpleFormatDate(
+            lecture.dates[index + 1]!,
+            context,
+          ),
           delayedDate: stageState(index) == 1
               ? MultipleDateFormat.simpleFormatDate(
                   lecture.stagesHistory[index + 1]!,
+                  context,
                 )
               : null,
         ),

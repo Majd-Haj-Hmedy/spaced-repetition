@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../notifications/notification_service.dart';
@@ -93,18 +94,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text('appbar_settings'.i18n()),
       ),
       body: FutureBuilder(
         future: _getData(),
         builder: (context, snapshot) => ListView(
           children: [
             ExpansionTile(
-              title: const Text('Theme'),
+              title: Text('settings_theme'.i18n()),
               trailing: const Icon(Icons.arrow_drop_down),
               children: [
                 RadioListTile(
-                  title: const Text('Light'),
+                  title: Text('settings_theme_light'.i18n()),
                   value: 0,
                   groupValue: _selectedTheme,
                   onChanged: (value) {
@@ -115,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text('Dark'),
+                  title: Text('settings_theme_dark'.i18n()),
                   value: 1,
                   groupValue: _selectedTheme,
                   onChanged: (value) {
@@ -126,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text('System default'),
+                  title: Text('settings_theme_system'.i18n()),
                   value: 2,
                   groupValue: _selectedTheme,
                   onChanged: (value) {
@@ -139,13 +140,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
             ExpansionTile(
-              title: const Text('Reminders'),
+              title: Text('settings_reminders'.i18n()),
               trailing: const Icon(Icons.arrow_drop_down),
               initiallyExpanded: true,
               children: [
                 for (int i = 0; i <= _reminders.length - 1; i++)
                   ListTile(
-                    title: Text('Reminder ${i + 1}'),
+                    title: Text(
+                      'settings_reminder'.i18n(
+                        ['${i + 1}'],
+                      ),
+                    ),
                     leading: Text(
                       _reminders[i],
                       style: TextStyle(

@@ -51,6 +51,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   @override
   Widget build(BuildContext context) {
     final folders = ref.watch(foldersProvider);
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar';
     return WillPopScope(
       onWillPop: () async {
         if (widget.firstLaunch) {
@@ -75,10 +76,11 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
           ),
           Positioned(
             bottom: 25,
-            right: 25,
+            right: isRTL ? null : 25,
+            left: isRTL ? 25 : null,
             child: Showcase(
               key: _onboardKey,
-              description: 'Create a folder',
+              description: '',
               onTargetClick: () => _showAddFolderDialog(FolderMode.add),
               disposeOnTap: true,
               targetBorderRadius: BorderRadius.circular(16),

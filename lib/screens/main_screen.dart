@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:localization/localization.dart';
 import 'package:repet/screens/folders.dart';
 import 'package:repet/screens/home.dart';
-import 'package:repet/screens/report.dart';
+import 'package:repet/screens/reports.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:repet/widgets/drawer/main_drawer.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -23,17 +23,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   final _onboardKey = GlobalKey();
 
   static final Map<String, String> _appBarTitleOptions = {
-    'home': 'home_appbar'.i18n(),
-    'folder': 'Select folder',
-    'report': 'Reports',
+    'home': 'appbar_main_home'.i18n(),
+    'folder': 'appbar_main_folder'.i18n(),
+    'report': 'appbar_main_reports'.i18n(),
   };
-  static const List<String> _tabNames = [
-    'Home',
-    'Lectures',
-    'Reports',
+  static final List<String> _tabNames = [
+    'nav_home'.i18n(),
+    'nav_lectures'.i18n(),
+    'nav_reports'.i18n(),
   ];
   var _navIndex = 0;
-  var _appBarTitle = 'Home';
+  var _appBarTitle = 'appbar_main_home'.i18n();
 
   void _updateAppBarTitle(String key) {
     setState(() {
@@ -82,7 +82,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         activeScreen = FoldersScreen(firstLaunch: widget.firstLaunch);
         break;
       case 2:
-        activeScreen = const ReportScreen();
+        activeScreen = ReportScreen();
         break;
     }
 
@@ -103,7 +103,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           ),
           Showcase(
             key: _onboardKey,
-            description: 'Go to the lectures ',
+            description: 'showcase_go_to_lectures'.i18n(),
             onTargetClick: () => _updateScreen(1),
             disposeOnTap: true,
             child: NavigationDestination(

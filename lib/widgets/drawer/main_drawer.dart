@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/screens/about.dart';
 import 'package:repet/screens/onboard_screen.dart';
 import 'package:repet/screens/settings.dart';
@@ -18,7 +19,7 @@ class MainDrawer extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/repet.png',
+                  'assets/images/repet.png',
                   width: 100,
                   height: 100,
                 ),
@@ -32,7 +33,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Introduction'),
+            title: Text('drawer_introduction'.i18n()),
             leading: const Icon(Icons.play_circle),
             onTap: () {
               Navigator.pop(context);
@@ -46,7 +47,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Settings'),
+            title: Text('drawer_settings'.i18n()),
             leading: const Icon(Icons.settings),
             onTap: () {
               Navigator.pop(context);
@@ -59,7 +60,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Send feedback'),
+            title: Text('drawer_send_feedback'.i18n()),
             leading: const Icon(Icons.feedback),
             onTap: () async {
               Navigator.pop(context);
@@ -84,7 +85,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('About'),
+            title: Text('drawer_about'.i18n()),
             leading: const Icon(Icons.info),
             onTap: () {
               Navigator.pop(context);

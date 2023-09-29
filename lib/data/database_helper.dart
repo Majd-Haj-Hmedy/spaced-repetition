@@ -5,8 +5,11 @@ import 'package:path/path.dart' as path;
 class DatabaseHelper {
   static Future<Database> getDatabase() async {
     final dbPath = await sql.getDatabasesPath();
-    final db = await sql.openDatabase(path.join(dbPath, 'repet.db'),
-        version: 1, onCreate: _createDatabase);
+    final db = await sql.openDatabase(
+      path.join(dbPath, 'repet.db'),
+      version: 1,
+      onCreate: _createDatabase,
+    );
     return db;
   }
 
@@ -42,8 +45,9 @@ class DatabaseHelper {
 
     await db.execute('''
       CREATE TABLE COMPLETIONS (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL
+        status INTEGER,
+        date TEXT,
+        folder_name TEXT
       )
     ''');
   }

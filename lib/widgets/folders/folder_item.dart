@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/models/folder.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
@@ -50,13 +51,13 @@ class _FolderItemState extends ConsumerState<FolderItem> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Folder'),
-        content: const Text(
-            'This folder and its content can NOT be retrieved\nDo you want to proceed?'),
+        title: Text('folders_delete_dialog_title'.i18n()),
+        content: Text(
+            'folders_delete_dialog_content'.i18n()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('folders_delete_dialog_cancel'.i18n()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -73,7 +74,7 @@ class _FolderItemState extends ConsumerState<FolderItem> {
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text('folders_delete_dialog_delete'.i18n()),
           ),
         ],
       ),
@@ -108,7 +109,7 @@ class _FolderItemState extends ConsumerState<FolderItem> {
       onTap: _openLecturesScreen,
       child: Showcase(
         key: _onboardKey,
-        description: 'Open folder',
+        description: 'showcase_open_folder'.i18n(),
         onTargetClick: _openLecturesScreen,
         disposeOnTap: true,
         child: Column(
@@ -142,13 +143,13 @@ class _FolderItemState extends ConsumerState<FolderItem> {
                       : _showDeleteDialog(context),
                   icon: const Icon(Icons.more_vert),
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 0,
-                      child: Text('Rename'),
+                      child: Text('folders_rename'.i18n()),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 1,
-                      child: Text('Delete'),
+                      child: Text('folders_delete'.i18n()),
                     ),
                   ],
                 ),

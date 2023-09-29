@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/constants/strings.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -10,7 +11,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text('appbar_about'.i18n()),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -24,7 +25,7 @@ class AboutScreen extends StatelessWidget {
                     elevation: 10,
                     clipBehavior: Clip.hardEdge,
                     child: Image.asset(
-                      'assets/repet_logo.png',
+                      'assets/images/repet_logo.png',
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
@@ -48,11 +49,11 @@ class AboutScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      'Repet is an app designed to utilize the power of spaced repetition, maximizing memorization capabilities and enhancing the learning experience.',
-                      style: TextStyle(fontSize: 16),
+                      'about_description'.i18n(),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 36),

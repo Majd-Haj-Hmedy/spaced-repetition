@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/models/lecture.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/details.dart';
@@ -29,13 +30,12 @@ class LectureItem extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Folder'),
-        content: const Text(
-            'This folder and its content can NOT be retrieved\nDo you want to proceed?'),
+        title: Text('lectures_delete_dialog_title'.i18n()),
+        content: Text('lectures_delete_dialog_content'.i18n()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('lectures_delete_dialog_cancel'.i18n()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -46,7 +46,7 @@ class LectureItem extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text('lectures_delete_dialog_delete'.i18n()),
           ),
         ],
       ),
@@ -102,13 +102,13 @@ class LectureItem extends ConsumerWidget {
                     },
                     icon: const Icon(Icons.more_vert),
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 0,
-                        child: Text('Edit'),
+                        child: Text('lectures_edit'.i18n()),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 1,
-                        child: Text('Delete'),
+                        child: Text('lectures_delete'.i18n()),
                       ),
                     ],
                   ),
@@ -116,7 +116,11 @@ class LectureItem extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               LectureProperty(
-                text: 'Stage ${lecture.currentStage}',
+                text: 'lectures_item_stage'.i18n(
+                  [
+                    '${lecture.currentStage}',
+                  ],
+                ),
                 icon: Icons.restart_alt,
                 color: const Color.fromARGB(255, 82, 131, 235),
               ),
@@ -128,7 +132,7 @@ class LectureItem extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               LectureProperty(
-                text: MultipleDateFormat.simpleFormatDate(lecture.currentDate),
+                text: MultipleDateFormat.simpleFormatDate(lecture.currentDate, context),
                 icon: Icons.calendar_month,
                 color: Colors.grey,
               ),

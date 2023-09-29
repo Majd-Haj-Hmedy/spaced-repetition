@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/util/date_format.dart';
 
 import '../../models/lecture.dart';
@@ -96,19 +97,22 @@ class _AddLectureState extends State<AddLecture> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isEditMode ? 'Edit Lecture' : 'Add lecture',
+                    isEditMode
+                        ? 'lectures_edit_dialog_title'.i18n()
+                        : 'lectures_add_dialog_title'.i18n(),
                     style: const TextStyle(fontSize: 24),
                   ),
                   TextFormField(
                     autofocus: true,
                     initialValue: _enteredName,
                     maxLength: 25,
-                    decoration: const InputDecoration(
-                      label: Text('Lecture Name'),
+                    decoration: InputDecoration(
+                      label: Text('lectures_add_dialog_name_hint'.i18n()),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().length < 2) {
-                        return 'Name must be longer than 2 characters';
+                        return 'lectures_add_dialog_name_validation_hint'
+                            .i18n();
                       }
                       return null;
                     },
@@ -120,12 +124,12 @@ class _AddLectureState extends State<AddLecture> {
                       DropdownButton(
                         icon: const Icon(Icons.arrow_drop_down),
                         value: _selectedDifficulty,
-                        items: const [
+                        items: [
                           DropdownMenuItem(
                             value: 0,
                             child: Text(
-                              'Easy',
-                              style: TextStyle(
+                              'lectures_add_dialog_difficulty_easy'.i18n(),
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 73, 159, 104),
                                 fontWeight: FontWeight.normal,
                               ),
@@ -134,8 +138,8 @@ class _AddLectureState extends State<AddLecture> {
                           DropdownMenuItem(
                             value: 1,
                             child: Text(
-                              'Medium',
-                              style: TextStyle(
+                              'lectures_add_dialog_difficulty_medium'.i18n(),
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 255, 175, 33),
                                 fontWeight: FontWeight.normal,
                               ),
@@ -144,8 +148,8 @@ class _AddLectureState extends State<AddLecture> {
                           DropdownMenuItem(
                             value: 2,
                             child: Text(
-                              'Hard',
-                              style: TextStyle(
+                              'lectures_add_dialog_difficulty_hard'.i18n(),
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 221, 81, 71),
                                 fontWeight: FontWeight.normal,
                               ),
@@ -167,7 +171,7 @@ class _AddLectureState extends State<AddLecture> {
                               _hasChosenDate
                                   ? MultipleDateFormat.simpleYearFormatDate(
                                       _selectedDate)
-                                  : 'Select start date',
+                                  : 'lectures_add_dialog_select_date'.i18n(),
                             ),
                             const SizedBox(width: 6),
                             const Icon(Icons.calendar_month),
@@ -178,7 +182,7 @@ class _AddLectureState extends State<AddLecture> {
                   ),
                   const SizedBox(height: 18),
                   Text(
-                    'Have already progressed? Pick up where you left off',
+                    'lectures_add_dialog_did_progress'.i18n(),
                     style: TextStyle(
                       fontSize: 16,
                       color: isEditMode ? Colors.grey : null,
@@ -204,7 +208,7 @@ class _AddLectureState extends State<AddLecture> {
                     children: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                        child: Text('lectures_add_dialog_cancel'.i18n()),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton(
@@ -219,7 +223,9 @@ class _AddLectureState extends State<AddLecture> {
                               Theme.of(context).colorScheme.onPrimary,
                         ),
                         child: Text(
-                          isEditMode ? 'Edit' : 'Add',
+                          isEditMode
+                              ? 'lectures_edit_dialog_edit'.i18n()
+                              : 'lectures_add_dialog_add'.i18n(),
                         ),
                       ),
                     ],

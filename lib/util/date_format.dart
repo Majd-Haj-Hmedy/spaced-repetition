@@ -1,13 +1,22 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MultipleDateFormat {
-  static final _simpleFormatter = DateFormat('dd MMM.');
-  static final _simpleYearFormatter = DateFormat('dd MMM. yyyy');
-  static String simpleFormatDate(DateTime date) {
-    return _simpleFormatter.format(date);
+  static final _simpleYearFormatter = DateFormat('dd MMM yyyy');
+
+  static String simpleFormatDate(DateTime date, BuildContext context) {
+    return DateFormat('dd MMM', Localizations.localeOf(context).languageCode)
+        .format(date);
   }
 
-  static String simpleYearFormatDate(DateTime date) {
+  static String simpleYearFormatDate(DateTime date, [BuildContext? context]) {
+    // If a context is passed, then the date will be formatted based on the
+    // current locale
+    if (context != null) {
+      return DateFormat(
+              'dd MMM yyyy', Localizations.localeOf(context).languageCode)
+          .format(date);
+    }
     return _simpleYearFormatter.format(date);
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/util/lecture_difficulty.dart';
@@ -101,7 +102,11 @@ class LectureActionItem extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   LectureProperty(
-                    text: 'Stage ${lecture.currentStage}',
+                    text: 'home_lecture_stage'.i18n(
+                      [
+                        '${lecture.currentStage}',
+                      ],
+                    ),
                     icon: Icons.restart_alt,
                     color: const Color.fromARGB(255, 82, 131, 235),
                   ),
@@ -123,7 +128,7 @@ class LectureActionItem extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: _completeAction(context, ref),
                 icon: Icon(due == -1 ? Icons.history : Icons.check),
-                label: const Text('Complete'),
+                label: Text('home_lecture_complete'.i18n()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: due == -1
                       ? const Color(0xFFF7b217)
@@ -152,7 +157,7 @@ class LectureActionItem extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Skip',
+                          'home_lecture_skip'.i18n(),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.error,
                           ),

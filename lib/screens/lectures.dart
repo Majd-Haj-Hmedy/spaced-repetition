@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/models/lecture.dart';
 import 'package:repet/providers/lectures_provider.dart';
 import 'package:repet/screens/main_screen.dart';
@@ -111,7 +112,7 @@ class _LecturesScreenState extends ConsumerState<LecturesScreen> {
         ),
         floatingActionButton: Showcase(
           key: _onboardKey,
-          description: 'Add a lecture',
+          description: 'showcase_add_lecture'.i18n(),
           onTargetClick: _showAddLectureDialog,
           disposeOnTap: true,
           targetBorderRadius: BorderRadius.circular(16),

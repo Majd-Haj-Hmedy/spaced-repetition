@@ -51,6 +51,11 @@ class NotificationService {
     notificationsPlugin.cancelAll();
   }
 
+  Future<void> requestPermission() async {
+    await notificationsPlugin.resolvePlatformSpecificImplementation<
+    AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+  }
+
   NotificationDetails get notificationDetails {
     return const NotificationDetails(
       android: AndroidNotificationDetails(

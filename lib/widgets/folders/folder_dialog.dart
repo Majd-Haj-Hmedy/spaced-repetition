@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/screens/folders.dart';
 
 class FolderDialog extends ConsumerStatefulWidget {
@@ -22,7 +23,8 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
 
   @override
   void initState() {
-    _nameController = TextEditingController(text: widget.editedFolderName ?? '');
+    _nameController =
+        TextEditingController(text: widget.editedFolderName ?? '');
     super.initState();
   }
 
@@ -43,16 +45,16 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
           children: [
             Text(
               widget.folderMode == FolderMode.add
-                  ? 'Add Folder'
-                  : 'Rename Folder',
+                  ? 'folders_add_dialog_title'.i18n()
+                  : 'folders_edit_dialog_title'.i18n(),
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             TextField(
               maxLength: 25,
               controller: _nameController,
-              decoration: const InputDecoration(
-                label: Text('Name'),
+              decoration: InputDecoration(
+                label: Text('folders_add_dialog_name_hint'.i18n()),
               ),
             ),
             const SizedBox(
@@ -63,7 +65,7 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text('folders_add_dialog_cancel'.i18n()),
                 ),
                 const SizedBox(
                   width: 8,
@@ -80,7 +82,10 @@ class _FolderDialogState extends ConsumerState<FolderDialog> {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: Text(
-                      widget.folderMode == FolderMode.add ? 'Add' : 'Rename'),
+                    widget.folderMode == FolderMode.add
+                        ? 'folders_add_dialog_add'.i18n()
+                        : 'folders_edit_dialog_add'.i18n(),
+                  ),
                 ),
               ],
             )

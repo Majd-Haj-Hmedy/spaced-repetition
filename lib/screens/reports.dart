@@ -2,47 +2,80 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/constants/colors.dart';
+import 'package:repet/util/date_format.dart';
+import '../data/database_helper.dart';
 import '../widgets/reports/active_folder.dart';
 
-// ignore: must_be_immutable
 class ReportScreen extends ConsumerWidget {
-  const ReportScreen({super.key});
+  ReportScreen({super.key});
+
+  final List<int> lectureStats = [];
+  final Map<DateTime, int> heatmap = {};
+
+  // TODO: Replace with real data
+  Future<void> loadData() async {
+    final db = await DatabaseHelper.getDatabase();
+    final loadedCompletions = await db.query('completions');
+
+    var currentWeekCompletions = 0;
+    var previousWeekCompletions = 0;
+
+    for (final row in loadedCompletions) {
+      final lectureStatus = row['status'] as int;
+      final lectureDate =
+          MultipleDateFormat.simpleYearParseString(row['status'] as String);
+      final folderName = row['status'] as String;
+      switch (lectureStatus) {
+        case 1:
+          lectureStats[0] += 1;
+          heatmap[lectureDate] = heatmap[lectureDate] ?? 0 + 1;
+          break;
+        case 0:
+          lectureStats[1] += 1;
+          break;
+        case -1:
+          lectureStats[2] += 1;
+          break;
+      }
+      // TODO: Handle week productivity
+      // TODO: Handle folders ranking
+    }
+  }
+
+  Future<List<int>> loadLectureCountData() async {
+    return [10, 3, 1];
+  }
+
+  Future<int> loadProductivityData() async {
+    return -45;
+  }
+
+  Future<int> loadStreakData() async {
+    return 5;
+  }
+
+  Future<List<String>> loadActiveFoldersData() async {
+    return [
+      'Anatomy',
+      'Biology',
+      'Physics',
+    ];
+  }
+
+  Future<Map<DateTime, int>> loadCompletionHeatmapData() async {
+    return {
+      DateTime(2023, 9, 6): 1,
+      DateTime(2023, 9, 7): 3,
+      DateTime(2023, 9, 8): 5,
+      DateTime(2023, 9, 9): 6,
+      DateTime(2023, 9, 13): 8,
+    };
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO: Replace with real data
-
-    Future<List<int>> loadLectureCountData() async {
-      return [10, 3, 1];
-    }
-
-    Future<int> loadProductivityData() async {
-      return -45;
-    }
-
-    Future<int> loadStreakData() async {
-      return 5;
-    }
-
-    Future<List<String>> loadActiveFoldersData() async {
-      return [
-        'Anatomy',
-        'Biology',
-        'Physics',
-      ];
-    }
-
-    Future<Map<DateTime, int>> loadCompletionHeatmapData() async {
-      return {
-        DateTime(2023, 9, 6): 1,
-        DateTime(2023, 9, 7): 3,
-        DateTime(2023, 9, 8): 5,
-        DateTime(2023, 9, 9): 6,
-        DateTime(2023, 9, 13): 8,
-      };
-    }
-
     return Center(
       child: ListView(
         padding: const EdgeInsets.all(8),
@@ -56,7 +89,7 @@ class ReportScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Lecture stats',
+                      'reports_lecture_stats_title'.i18n(),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -68,7 +101,7 @@ class ReportScreen extends ConsumerWidget {
                         Column(
                           children: [
                             Text(
-                              'Completed',
+                              'reports_lecture_stats_completed'.i18n(),
                               style: TextStyle(
                                 color: RepetColors.statusCheck,
                                 fontSize: 16,
@@ -89,7 +122,7 @@ class ReportScreen extends ConsumerWidget {
                         Column(
                           children: [
                             Text(
-                              'Delayed',
+                              'reports_lecture_stats_delayed'.i18n(),
                               style: TextStyle(
                                 color: RepetColors.statusDelayed,
                                 fontSize: 16,
@@ -110,7 +143,7 @@ class ReportScreen extends ConsumerWidget {
                         Column(
                           children: [
                             Text(
-                              'Skipped',
+                              'reports_lecture_stats_skipped'.i18n(),
                               style: TextStyle(
                                 color: RepetColors.statusSkipped,
                                 fontSize: 16,
@@ -149,7 +182,7 @@ class ReportScreen extends ConsumerWidget {
                     : Column(
                         children: [
                           Text(
-                            'Productivity',
+                            'reports_productivity_title'.i18n(),
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
@@ -170,7 +203,7 @@ class ReportScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '${snapshot.data!.abs()}% Compared to previous week',
+                                '${snapshot.data!.abs()}% ${'reports_productivity_content'.i18n()}',
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ],
@@ -190,7 +223,7 @@ class ReportScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Streak',
+                      'reports_streak_title'.i18n(),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -204,31 +237,41 @@ class ReportScreen extends ConsumerWidget {
                                   child: CircularProgressIndicator.adaptive(),
                                 )
                               : snapshot.data == 0
-                                  ? const Text(
-                                      'You lost your streak..\nDon\'t give up!',
-                                      style: TextStyle(
+                                  ? Text(
+                                      'reports_streak_lost_streak'.i18n(),
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     )
                                   : RichText(
                                       text: TextSpan(
-                                        text: 'You\'re on a ',
+                                        text: 'reports_streak_content_first'
+                                            .i18n(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge,
                                         children: [
                                           TextSpan(
-                                            text:
-                                                '${snapshot.data!} ${snapshot.data! == 1 ? 'day' : 'days'} streak!',
+                                            text: 'reports_streak_content_data'
+                                                .i18n(
+                                              [
+                                                '${snapshot.data!}',
+                                                snapshot.data! == 1
+                                                    ? 'day'
+                                                    : 'days'
+                                              ],
+                                            ),
                                             style: const TextStyle(
                                               color: Colors.amber,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20,
                                             ),
                                           ),
-                                          const TextSpan(
-                                            text: '\nKeep it up!',
-                                            style: TextStyle(fontSize: 16),
+                                          TextSpan(
+                                            text: 'reports_streak_content_last'
+                                                .i18n(),
+                                            style:
+                                                const TextStyle(fontSize: 16),
                                           ),
                                         ],
                                       ),
@@ -256,7 +299,7 @@ class ReportScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Active Folders',
+                      'reports_active_folders_title'.i18n(),
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
@@ -275,8 +318,9 @@ class ReportScreen extends ConsumerWidget {
                             child: CircularProgressIndicator.adaptive(),
                           )
                         : snapshot.data!.isEmpty
-                            ? const Center(
-                                child: Text('No folders created!'),
+                            ? Center(
+                                child: Text(
+                                    'reports_active_folders_no_folders'.i18n()),
                               )
                             : ListView.builder(
                                 shrinkWrap: true,
@@ -304,7 +348,7 @@ class ReportScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Completion heatmap',
+                      'reports_heatmap_title'.i18n(),
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
@@ -327,13 +371,32 @@ class ReportScreen extends ConsumerWidget {
                               4: Colors.green[600]!,
                               5: Colors.green[700]!,
                             },
+                            colorTipHelper: [
+                              Padding(
+                                padding: const EdgeInsets.all(1),
+                                child:
+                                    Text('reports_heatmap_legend_less'.i18n()),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(1),
+                                child:
+                                    Text('reports_heatmap_legend_more'.i18n()),
+                              ),
+                            ],
                             onClick: (value) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(snapshot.data![value] == null
-                                      ? 'No lectures completed'
-                                      : '${snapshot.data![value].toString()} Lectures completed'),
+                                  content: Text(
+                                    snapshot.data![value] == null
+                                        ? 'reports_heatmap_no_lectures'.i18n()
+                                        : 'reports_heatmap_lectures_completed_snackbar_message'
+                                            .i18n(
+                                            [
+                                              snapshot.data![value].toString(),
+                                            ],
+                                          ),
+                                  ),
                                 ),
                               );
                             },

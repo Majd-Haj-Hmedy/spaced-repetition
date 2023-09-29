@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:repet/data/onbaording_screens.dart';
+import 'package:localization/localization.dart';
+import 'package:repet/data/onboard_data.dart';
 import 'package:repet/screens/main_screen.dart';
 import 'package:repet/widgets/onboarding/onboard_item.dart';
 
@@ -22,12 +23,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final onboardList = isDarkMode ? onboardListDark : onboardListLight;
-
-    for (int i = 0; i < onboardList.length; i++) {
-      precacheImage(AssetImage(onboardList[i].image), context);
+    for (int i = 0; i < onboardData.length; i++) {
+      precacheImage(AssetImage(onboardData[i].image), context);
     }
 
     void loadPreviousOnboard() {
@@ -41,7 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     void loadNextOnboard() {
-      if (index < onboardList.length - 1) {
+      if (index < onboardData.length - 1) {
         _onboardPagesController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -66,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             Expanded(
               child: PageView.builder(
-                itemCount: onboardList.length,
+                itemCount: onboardData.length,
                 onPageChanged: (int newIndex) {
                   setState(() {
                     index = newIndex;
@@ -78,16 +75,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: ListView(
                       shrinkWrap: true,
                       children: [
-                        Image.asset(onboardList[pageIndex].image),
+                        Image.asset(onboardData[pageIndex].image),
                         const SizedBox(height: 50),
                         Text(
-                          onboardList[pageIndex].title,
+                          onboardData[pageIndex].title,
                           style: Theme.of(context).textTheme.titleLarge,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          onboardList[pageIndex].content,
+                          onboardData[pageIndex].content,
                           style: const TextStyle(fontSize: 16),
                           textAlign: TextAlign.center,
                         ),
@@ -104,7 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   TextButton.icon(
                     onPressed: index > 0 ? loadPreviousOnboard : null,
                     icon: const Icon(Icons.chevron_left),
-                    label: const Text('Previous'),
+                    label: Text('onboard_actions_prev'.i18n()),
                   ),
                   const Spacer(),
                   SizedBox(
@@ -112,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: IntrinsicHeight(
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: onboardList.length,
+                        itemCount: onboardData.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) => Padding(
                           padding: const EdgeInsets.only(right: 4),
@@ -131,7 +128,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // for the mean time
                     label: const Icon(Icons.chevron_right),
                     icon: Text(
-                      (index < onboardList.length - 1) ? 'Next' : 'Finish',
+                      (index < onboardData.length - 1)
+                          ? 'onboard_actions_next'.i18n()
+                          : 'onboard_actions_finish'.i18n(),
                     ),
                   ),
                 ],
