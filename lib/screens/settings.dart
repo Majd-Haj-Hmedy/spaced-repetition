@@ -21,6 +21,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _getData() async {
     _sharedPreferences = await SharedPreferences.getInstance();
 
+    // #region Getting the reminders data
+    setState(() {
+      _reminders = _sharedPreferences.get('reminders') as List<String>;
+    });
+    // #endregion
+
     // #region Getting the theme data
     if (_selectedTheme != null) {
       return;
@@ -41,10 +47,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         break;
     }
     // #endregion
-
-    // #region Getting the reminders data
-    _reminders = _sharedPreferences.get('reminders') as List<String>;
-    // #endregion
   }
 
   Future<TimeOfDay?> _showTimePickerDialog() async {
@@ -52,6 +54,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _addReminder(TimeOfDay time) async {
+    if (!await NotificationService().isPermissionGranted(context: context)) {
+      return;
+    }
     final time = await _showTimePickerDialog();
     if (time == null) {
       return;
@@ -74,6 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _scheduleNotifications() async {
     await NotificationService().cancelAllNotifications();
     for (int i = 0; i < _reminders.length; i++) {
+      // ignore: use_build_context_synchronously
       await NotificationService().showScheduledNotification(
         id: i + 1,
         title: 'Study time!',

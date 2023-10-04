@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localization/localization.dart';
 import 'package:repet/providers/folders_provider.dart';
 import 'package:repet/widgets/folders/folder_dialog.dart';
 import 'package:repet/widgets/folders/folder_item.dart';
@@ -80,7 +81,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
             left: isRTL ? 25 : null,
             child: Showcase(
               key: _onboardKey,
-              description: '',
+              description: 'showcase_create_folder'.i18n(),
               onTargetClick: () => _showAddFolderDialog(FolderMode.add),
               disposeOnTap: true,
               targetBorderRadius: BorderRadius.circular(16),

@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -6,7 +8,7 @@ class NotificationService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
   Future<void> initNotification() async {
     const androidInitializationSettings =
-        AndroidInitializationSettings('repet_logo');
+        AndroidInitializationSettings('@mipmap/ic_launcher.png');
 
     final iosInitializationSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -27,6 +29,40 @@ class NotificationService {
       initializationSettings,
       onDidReceiveNotificationResponse: (details) async {},
     );
+  }
+
+  Future<bool> isPermissionGranted({required BuildContext context}) async {
+    final permissionStatus = await Permission.notification.request();
+    if (permissionStatus.isDenied) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Permission denied'),
+            action: SnackBarAction(
+              label: 'Settings',
+              onPressed: () async => await openAppSettings(),
+            ),
+          ),
+        );
+      }
+      return false;
+    } else if (permissionStatus.isPermanentlyDenied) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Permission denied'),
+            action: SnackBarAction(
+              label: 'Settings',
+              onPressed: () async => await openAppSettings(),
+            ),
+          ),
+        );
+      }
+      return false;
+    }
+    return true;
   }
 
   Future<void> showScheduledNotification({
@@ -52,8 +88,10 @@ class NotificationService {
   }
 
   Future<void> requestPermission() async {
-    await notificationsPlugin.resolvePlatformSpecificImplementation<
-    AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+    await notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()!
+        .requestPermission();
   }
 
   NotificationDetails get notificationDetails {
