@@ -23,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     // #region Getting the reminders data
     setState(() {
-      _reminders = _sharedPreferences.get('reminders') as List<String>;
+      _reminders = _sharedPreferences.getStringList('reminders')!;
     });
     // #endregion
 

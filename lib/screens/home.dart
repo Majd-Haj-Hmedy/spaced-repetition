@@ -104,15 +104,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const Divider(),
             snapshot.connectionState == ConnectionState.waiting
-                ? const Align(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator.adaptive())
+                ? const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                  )
                 : lecturesList.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 40),
-                        child: Text(
-                          'No lectures!',
-                          style: Theme.of(context).textTheme.titleLarge,
+                    ? Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                'assets/images/no_lectures.png',
+                                width: 125,
+                                height: 125,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No lectures',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context).disabledColor),
+                              ),
+                              const SizedBox(height: 50),
+                            ],
+                          ),
                         ),
                       )
                     : Expanded(

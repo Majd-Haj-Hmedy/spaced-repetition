@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repet/data/database_helper.dart';
 import 'package:repet/models/folder.dart';
 import 'package:repet/models/lecture.dart';
+import 'package:repet/screens/home.dart';
 import 'package:repet/util/date_format.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -140,6 +141,15 @@ class LecturesStateNotifier extends StateNotifier<List<Lecture>> {
       where: 'id = ?',
       whereArgs: [lecture.id],
     );
+  }
+
+  Future<void> logCompletion(int status, String folderName) async {
+    await db.insert('completions', {
+      'status': status,
+      'date':
+          MultipleDateFormat.simpleYearFormatDate(DateTime.now().removeTime()),
+      'folder_name': folderName,
+    });
   }
 }
 

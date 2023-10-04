@@ -24,9 +24,11 @@ class MainDrawer extends StatelessWidget {
                   height: 100,
                 ),
                 Text(
-                  RepetStrings.appName,
+                  RepetStrings.appName.toUpperCase(),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: const Color(0xff5283fb),
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
                       ),
                 ),
               ],

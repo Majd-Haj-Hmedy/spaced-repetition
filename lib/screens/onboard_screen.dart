@@ -79,7 +79,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         const SizedBox(height: 50),
                         Text(
                           onboardData[pageIndex].title,
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),

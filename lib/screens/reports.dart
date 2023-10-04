@@ -1,88 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:localization/localization.dart';
 import 'package:repet/constants/colors.dart';
+import 'package:repet/screens/home.dart';
 import 'package:repet/util/date_format.dart';
 import '../data/database_helper.dart';
 import '../widgets/reports/active_folder.dart';
 
-class ReportScreen extends ConsumerWidget {
+// ignore: must_be_immutable
+class ReportScreen extends StatelessWidget {
   ReportScreen({super.key});
 
-  final List<int> lectureStats = [];
+  final List<int> lectureStatistics = [0, 0, 0];
+  var productivity = 0;
+  var streak = 0;
   final Map<DateTime, int> heatmap = {};
+  final List<String> activeFolders = [];
 
-  // TODO: Replace with real data
   Future<void> loadData() async {
     final db = await DatabaseHelper.getDatabase();
     final loadedCompletions = await db.query('completions');
 
-    var currentWeekCompletions = 0;
-    var previousWeekCompletions = 0;
+    final Map<String, int> foldersMap = {};
+    var currentWeekProductivity = 0;
+    var previousWeekProductivity = 0;
 
     for (final row in loadedCompletions) {
-      final lectureStatus = row['status'] as int;
-      final lectureDate =
-          MultipleDateFormat.simpleYearParseString(row['status'] as String);
-      final folderName = row['status'] as String;
-      switch (lectureStatus) {
+      final completionStatus = row['status'] as int;
+      final completionDate =
+          MultipleDateFormat.simpleYearParseString(row['date'] as String);
+      final folderName = row['folder_name'] as String;
+      switch (completionStatus) {
         case 1:
-          lectureStats[0] += 1;
-          heatmap[lectureDate] = heatmap[lectureDate] ?? 0 + 1;
+          lectureStatistics[0]++;
+          foldersMap[folderName] = (foldersMap[folderName] ?? 0) + 1;
+          heatmap[completionDate] = (heatmap[completionDate] ?? 0) + 1;
+          if (completionDate.compareTo(
+                  completionDate.subtract(const Duration(days: 7))) >=
+              0) {
+            currentWeekProductivity += 1;
+          } else if (completionDate.compareTo(
+                  completionDate.subtract(const Duration(days: 14))) >=
+              0) {
+            previousWeekProductivity += 1;
+          }
           break;
         case 0:
-          lectureStats[1] += 1;
+          foldersMap[folderName] = foldersMap[folderName] ?? 0;
+          lectureStatistics[1]++;
+          heatmap[completionDate] = (heatmap[completionDate] ?? 0) + 1;
           break;
         case -1:
-          lectureStats[2] += 1;
+          foldersMap[folderName] = (foldersMap[folderName] ?? 0) - 1;
+          lectureStatistics[2]++;
+          if (completionDate.compareTo(
+                  completionDate.subtract(const Duration(days: 7))) >=
+              0) {
+            currentWeekProductivity -= 1;
+          } else if (completionDate.compareTo(
+                  completionDate.subtract(const Duration(days: 14))) >=
+              0) {
+            previousWeekProductivity -= 1;
+          }
           break;
       }
-      // TODO: Handle week productivity
-      // TODO: Handle folders ranking
+    }
+    if (previousWeekProductivity == 0) {
+      productivity = 100;
+    } else {
+      productivity = (currentWeekProductivity - previousWeekProductivity) ~/
+          previousWeekProductivity *
+          100;
+    }
+
+    // #region Sorting 3 most active folders
+    for (int i = 0; i <= 2; i++) {
+      MapEntry<String, int>? maxEntry;
+      for (final folder in foldersMap.entries) {
+        if (maxEntry == null || folder.value > maxEntry.value) {
+          maxEntry = folder;
+        }
+      }
+      if (maxEntry != null) {
+        activeFolders.add(maxEntry.key);
+        foldersMap.remove(maxEntry.key);
+      }
+    }
+    // #endregion
+
+    var currentDate = DateTime.now().removeTime();
+    while (true) {
+      if (heatmap[currentDate] == 0 || heatmap[currentDate] == null) {
+        return;
+      }
+      streak++;
+      currentDate = currentDate.subtract(const Duration(days: 1));
     }
   }
 
-  Future<List<int>> loadLectureCountData() async {
-    return [10, 3, 1];
-  }
-
-  Future<int> loadProductivityData() async {
-    return -45;
-  }
-
-  Future<int> loadStreakData() async {
-    return 5;
-  }
-
-  Future<List<String>> loadActiveFoldersData() async {
-    return [
-      'Anatomy',
-      'Biology',
-      'Physics',
-    ];
-  }
-
-  Future<Map<DateTime, int>> loadCompletionHeatmapData() async {
-    return {
-      DateTime(2023, 9, 6): 1,
-      DateTime(2023, 9, 7): 3,
-      DateTime(2023, 9, 8): 5,
-      DateTime(2023, 9, 9): 6,
-      DateTime(2023, 9, 13): 8,
-    };
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Center(
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          FutureBuilder(
-            future: loadLectureCountData(),
-            builder: (context, snapshot) => Card(
+      child: FutureBuilder(
+        future: loadData(),
+        builder: (context, snapshot) => ListView(
+          padding: const EdgeInsets.all(8),
+          children: [
+            Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -108,10 +133,10 @@ class ReportScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            !snapshot.hasData
+                            snapshot.connectionState == ConnectionState.waiting
                                 ? const CircularProgressIndicator.adaptive()
                                 : Text(
-                                    '${snapshot.data![0]}',
+                                    '${lectureStatistics[0]}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Noto Mono',
@@ -129,10 +154,10 @@ class ReportScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            !snapshot.hasData
+                            snapshot.connectionState == ConnectionState.waiting
                                 ? const CircularProgressIndicator.adaptive()
                                 : Text(
-                                    '${snapshot.data![1]}',
+                                    '${lectureStatistics[1]}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Noto Mono',
@@ -150,10 +175,10 @@ class ReportScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            !snapshot.hasData
+                            snapshot.connectionState == ConnectionState.waiting
                                 ? const CircularProgressIndicator.adaptive()
                                 : Text(
-                                    '${snapshot.data![2]}',
+                                    '${lectureStatistics[2]}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Noto Mono',
@@ -167,15 +192,12 @@ class ReportScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          FutureBuilder(
-            future: loadProductivityData(),
-            builder: (context, snapshot) => Card(
+            const SizedBox(height: 10),
+            Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: !snapshot.hasData
+                child: snapshot.connectionState == ConnectionState.waiting
                     ? const Center(
                         child: CircularProgressIndicator.adaptive(),
                       )
@@ -194,16 +216,16 @@ class ReportScreen extends ConsumerWidget {
                           Row(
                             children: [
                               Icon(
-                                snapshot.data! < 0
+                                productivity < 0
                                     ? Ionicons.arrow_down_circle
                                     : Ionicons.arrow_up_circle,
-                                color: snapshot.data! > 0
-                                    ? RepetColors.statusCheck
-                                    : RepetColors.statusSkipped,
+                                color: productivity < 0
+                                    ? RepetColors.statusSkipped
+                                    : RepetColors.statusCheck,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '${snapshot.data!.abs()}% ${'reports_productivity_content'.i18n()}',
+                                '${productivity.abs()}% ${'reports_productivity_content'.i18n()}',
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ],
@@ -212,11 +234,8 @@ class ReportScreen extends ConsumerWidget {
                       ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          FutureBuilder(
-            future: loadStreakData(),
-            builder: (context, snapshot) => Card(
+            const SizedBox(height: 10),
+            Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -232,11 +251,12 @@ class ReportScreen extends ConsumerWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: !snapshot.hasData
+                          child: snapshot.connectionState ==
+                                  ConnectionState.waiting
                               ? const Center(
                                   child: CircularProgressIndicator.adaptive(),
                                 )
-                              : snapshot.data == 0
+                              : streak == 0
                                   ? Text(
                                       'reports_streak_lost_streak'.i18n(),
                                       style: const TextStyle(
@@ -255,10 +275,8 @@ class ReportScreen extends ConsumerWidget {
                                             text: 'reports_streak_content_data'
                                                 .i18n(
                                               [
-                                                '${snapshot.data!}',
-                                                snapshot.data! == 1
-                                                    ? 'day'
-                                                    : 'days'
+                                                '$streak',
+                                                streak == 1 ? 'day' : 'days'
                                               ],
                                             ),
                                             style: const TextStyle(
@@ -288,60 +306,8 @@ class ReportScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          FutureBuilder(
-            future: loadActiveFoldersData(),
-            builder: (context, snapshot) => Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    Text(
-                      'reports_active_folders_title'.i18n(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 12),
-
-                    /*
-                     This nested conditioning checks if the data is loaded or 
-                     not, in which case, the list is checked whether it's empty
-                     or not
-                    */
-
-                    !snapshot.hasData
-                        ? const Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          )
-                        : snapshot.data!.isEmpty
-                            ? Center(
-                                child: Text(
-                                    'reports_active_folders_no_folders'.i18n()),
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (context, index) {
-                                  return ActiveFolder(
-                                    rank: index + 1,
-                                    name: snapshot.data![index],
-                                  );
-                                },
-                              ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          FutureBuilder(
-            future: loadCompletionHeatmapData(),
-            builder: (context, snapshot) => Card(
+            const SizedBox(height: 10),
+            Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -355,7 +321,7 @@ class ReportScreen extends ConsumerWidget {
                           .copyWith(fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 12),
-                    !snapshot.hasData
+                    snapshot.connectionState == ConnectionState.waiting
                         ? const Center(
                             child: CircularProgressIndicator.adaptive(),
                           )
@@ -363,7 +329,7 @@ class ReportScreen extends ConsumerWidget {
                             defaultColor: Theme.of(context).cardColor,
                             colorMode: ColorMode.color,
                             textColor: Theme.of(context).hintColor,
-                            datasets: snapshot.data!,
+                            datasets: heatmap,
                             colorsets: {
                               1: Colors.green[300]!,
                               2: Colors.green[400]!,
@@ -388,12 +354,12 @@ class ReportScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    snapshot.data![value] == null
+                                    heatmap[value] == null
                                         ? 'reports_heatmap_no_lectures'.i18n()
                                         : 'reports_heatmap_lectures_completed_snackbar_message'
                                             .i18n(
                                             [
-                                              snapshot.data![value].toString(),
+                                              heatmap[value].toString(),
                                             ],
                                           ),
                                   ),
@@ -405,8 +371,54 @@ class ReportScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Text(
+                      'reports_active_folders_title'.i18n(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 12),
+
+                    /*
+                       This nested conditioning checks if the data is loaded or 
+                       not, in which case, the list is checked whether it's empty
+                       or not
+                      */
+
+                    snapshot.connectionState == ConnectionState.waiting
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          )
+                        : activeFolders.isEmpty
+                            ? Center(
+                                child: Text(
+                                    'reports_active_folders_no_folders'.i18n()),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: activeFolders.length,
+                                itemBuilder: (context, index) {
+                                  return ActiveFolder(
+                                    rank: index + 1,
+                                    name: activeFolders[index],
+                                  );
+                                },
+                              ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

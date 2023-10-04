@@ -28,6 +28,11 @@ class LectureActionItem extends ConsumerWidget {
     if (due == 0) {
       return () async {
         lecture.advance();
+        final folderName = ref
+            .read(foldersProvider.notifier)
+            .getFolderByID(lecture.folderID)!
+            .name;
+        await ref.read(lecturesProvider.notifier).logCompletion(1, folderName);
         updateLectureLists!();
         await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
       };
@@ -46,6 +51,13 @@ class LectureActionItem extends ConsumerWidget {
       ).then((date) async {
         if (date != null) {
           lecture.lateAdvance(date);
+          final folderName = ref
+              .read(foldersProvider.notifier)
+              .getFolderByID(lecture.folderID)!
+              .name;
+          await ref
+              .read(lecturesProvider.notifier)
+              .logCompletion(0, folderName);
           updateLectureLists!();
           await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
         }
@@ -57,6 +69,11 @@ class LectureActionItem extends ConsumerWidget {
     if (due == 0 || due == -1) {
       return () async {
         lecture.skip();
+        final folderName = ref
+            .read(foldersProvider.notifier)
+            .getFolderByID(lecture.folderID)!
+            .name;
+        await ref.read(lecturesProvider.notifier).logCompletion(-1, folderName);
         updateLectureLists!();
         await ref.read(lecturesProvider.notifier).stageAdvancement(lecture);
       };
